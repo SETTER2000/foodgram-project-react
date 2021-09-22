@@ -6,8 +6,10 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('users.urls')),
+    path('api/', include('backend.users.urls')),
 
+
+    # path('api/auth/token/login/', include('djoser.urls.jwt')),
     # path(
     #     'docs/',
     #     TemplateView.as_view(template_name='redoc.html'),
