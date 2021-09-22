@@ -2,11 +2,11 @@ from functools import partial
 
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.crypto import get_random_string
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-
 from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
 
 from .models import User
@@ -16,13 +16,17 @@ from .serializers import UserSerializer
 
 class UserModelViewSet(viewsets.ModelViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
-
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (
-        partial(PermissonForRole, ROLES_PERMISSIONS.get('Users')),
-    )
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # filter_backends = (DjangoFilterBackend,)
+
+    permission_classes = [permissions.AllowAny]
+
+    # permission_classes = (
+    #     partial(PermissonForRole, ROLES_PERMISSIONS.get('Users')),
+    # )
 
     @action(
         methods=['PATCH', 'GET'],
@@ -41,6 +45,9 @@ class UserModelViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        return User.objects.filter(pk=self.kwargs["id"])
 
 
 @api_view(['POST'])

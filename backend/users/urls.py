@@ -8,12 +8,15 @@ from .views import email_auth
 
 router_v1 = routers.DefaultRouter()
 
-router_v1.register('users', vs.UserModelViewSet, basename='users')
+router_v1.register(r'users/(?P<id>[0-9]+)', vs.UserModelViewSet,
+                   basename='users')
+router_v1.register(r'users', vs.UserModelViewSet, basename='users')
+
 
 urlpatterns = [
     re_path(r'^', include(router_v1.urls)),
-    path('auth/email/', email_auth, name='email_auth'),
-    path('auth/token/login/', include('djoser.urls')),
-    path('auth/token/login/', include('djoser.urls.authtoken')),
-    path('auth/token/login/', include('djoser.urls.jwt')),
+    # path('auth/email/', email_auth, name='email_auth'),
+    path('users/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
+
 ]

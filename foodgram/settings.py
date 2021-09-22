@@ -27,10 +27,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
     'djoser',
+    'corsheaders',
     'django_filters',
-    'users',
+    'backend.users',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +126,8 @@ DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {},
+    'LOGIN_FIELD': 'email',
+    'USER_ID_FIELD': 'id',
 }
 
 SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=30)}
