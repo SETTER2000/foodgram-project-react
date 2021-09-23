@@ -13,6 +13,7 @@ validate_name = RegexValidator('^[\w.@+-]+$')
 
 class User(AbstractUser):
     """Модель пользователя с некоторыми настраиваемыми полями."""
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
     class Roles(models.TextChoices):
         ADMIN = 'admin', _('Administrator')
