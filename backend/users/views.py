@@ -7,7 +7,7 @@ from django.utils.crypto import get_random_string
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
+from config.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
 
 from .models import User
 from .permissions import PermissonForRole
