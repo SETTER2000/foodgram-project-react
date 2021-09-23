@@ -22,32 +22,34 @@ class UserModelViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # filter_backends = (DjangoFilterBackend,)
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = (permissions.AllowAny,)
 
     # permission_classes = (
     #     partial(PermissonForRole, ROLES_PERMISSIONS.get('Users')),
     # )
 
-    @action(
-        methods=['PATCH', 'GET'],
-        permission_classes=[permissions.IsAuthenticated],
-        detail=False,
-        url_path='me',
-    )
-    def user_me(self, request) -> Response:
-        """Пользовательский URL-адрес для редактирования своего профиля."""
-        if request.method == 'GET':
-            serializer = self.get_serializer(request.user)
-            return Response(serializer.data)
-        serializer = self.get_serializer(
-            request.user, data=request.data, partial=True
-        )
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def get_queryset(self):
-        return User.objects.filter(pk=self.kwargs["id"])
+    # @action(
+    #     methods=['PATCH', 'GET'],
+    #     permission_classes=[permissions.IsAuthenticated],
+    #     detail=False,
+    #     url_path='me',
+    # )
+    # def user_me(self, request) -> Response:
+    #     """Пользовательский URL-адрес для редактирования своего профиля."""
+    #     if request.method == 'GET':
+    #         serializer = self.get_serializer(request.user)
+    #         data = serializer.data
+    #         del data['password']
+    #         return Response(data)
+    #
+    #     serializer = self.get_serializer(
+    #         request.user, data=request.data, partial=True
+    #     )
+    #     if serializer.is_valid(raise_exception=True):
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_200_OK)
+    #
+    #     # return User.objects.filter(pk=self.kwargs["id"])
 
 
 @api_view(['POST'])
