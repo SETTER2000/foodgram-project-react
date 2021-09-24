@@ -11,7 +11,7 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls.authtoken')),
     # если раскомментить будет работать регистрация, НО перестанет работать
     # правильно остальное API.
-    # path('api/', include('backend.users.urls')),
+    path('api/', include('backend.users.urls')),
     path('api/', include('djoser.urls')),
 
     # path(
