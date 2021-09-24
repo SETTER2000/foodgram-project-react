@@ -11,16 +11,27 @@ from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
 from .mixin import CreateListModelMixinViewSet, CreateModelMixinViewSet
 from rest_framework.exceptions import ParseError
 from .models import User
-from .permissions import PermissonForRole
+from .permissions import PermissonForRole, AllowPostAnyReadAuthenticatedUser, \
+    IsAuthorOrReadOnly
 from .serializers import UserSerializer
 
 
 class UserModelViewSet(CreateListModelMixinViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
-    lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    # permission_classes = (PermissonForRole,)
 
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     if user.is_superuser:
+    #         return User.objects.all()
+    #     return User.objects.filter(username=user.username)
+    #
+    # def get_object(self):
+    #     obj = get_object_or_404(User.objects.filter(id=self.kwargs["pk"]))
+    #     self.check_object_permissions(self.request, obj)
+    #     return obj
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # filter_backends = (DjangoFilterBackend,)
 
@@ -31,9 +42,8 @@ class UserModelViewSet(CreateListModelMixinViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
-    def get_queryset(self):
-        user = self.request.user.id
-        return User.objects.filter(id=user)
+    # def get_queryset(self):
+    #     return User.objects.filter(id=self.request.user.id)
 
     # permission_classes = (permissions.IsAuthenticated,)
     # def get_queryset(self):
