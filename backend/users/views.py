@@ -39,8 +39,7 @@ class UserModelViewSet(CreateListModelMixinViewSet):
     #     user = self.request.user
     #     return user.accounts.all()
 
-    def perform_create(self, serializer):
-        serializer.save()
+
 
     # def get_queryset(self):
     #     return User.objects.filter(id=self.request.user.id)
