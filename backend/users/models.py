@@ -22,6 +22,7 @@ class User(AbstractUser):
 
     email = models.EmailField(
         _('email address'),
+        unique=True,
         max_length=254
     )
     password = models.CharField(
