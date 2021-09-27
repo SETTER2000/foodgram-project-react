@@ -42,7 +42,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'foodgram.urls'
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
@@ -62,7 +62,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
