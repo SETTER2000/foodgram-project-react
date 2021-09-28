@@ -29,6 +29,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'backend.users',
+    'backend.app',
+
+
 ]
 
 MIDDLEWARE = [
@@ -128,6 +131,8 @@ DJOSER = {
     'USER_ID_FIELD': 'id',
 }
 
+SILENCED_SYSTEM_CHECKS = ['auth.E003', 'auth.W004']
+
 SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=30)}
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
@@ -140,7 +145,7 @@ ROLES_PERMISSIONS = {
     'Users': {
         'user': (None,),
         'moderator': (None,),
-        'anon': (None,),
+        'anon': ('POST',),
     },
     'Reviews': {
         'user': ('GET', 'POST'),

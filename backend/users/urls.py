@@ -15,5 +15,4 @@ urlpatterns = [
     re_path(r'^', include(router_v1.urls)),
     # path('auth/email/', email_auth, name='email_auth'),
 
-
 ]

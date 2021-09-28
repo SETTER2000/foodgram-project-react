@@ -2,18 +2,15 @@ from functools import partial
 
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.crypto import get_random_string
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
 from .mixin import CreateListModelMixinViewSet, CreateModelMixinViewSet
-from rest_framework.exceptions import ParseError
 
 from .models import User
-from .permissions import PermissonForRole, AllowPostAnyReadAuthenticatedUser, \
-    IsAuthorOrReadOnly
+from .permissions import PermissonForRole
 from .serializers import UserSerializer
 
 
@@ -21,7 +18,9 @@ class UserModelViewSet(CreateListModelMixinViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
+    # permission_classes = (
+    #     partial(PermissonForRole, ROLES_PERMISSIONS.get("Users")),
+    # )
     # permission_classes = (PermissonForRole,)
 
     # def get_queryset(self):
