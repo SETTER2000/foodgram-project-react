@@ -18,41 +18,6 @@ class UserModelViewSet(CreateListModelMixinViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = (
-    #     partial(PermissonForRole, ROLES_PERMISSIONS.get("Users")),
-    # )
-    # permission_classes = (PermissonForRole,)
-
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     if user.is_superuser:
-    #         return User.objects.all()
-    #     return User.objects.filter(username=user.username)
-    #
-    # def get_object(self):
-    #     obj = get_object_or_404(User.objects.filter(id=self.kwargs["pk"]))
-    #     self.check_object_permissions(self.request, obj)
-    #     return obj
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    # filter_backends = (DjangoFilterBackend,)
-
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     return user.accounts.all()
-
-    # def get_queryset(self):
-    #     return User.objects.filter(id=self.request.user.id)
-
-    # permission_classes = (permissions.IsAuthenticated,)
-    # def get_queryset(self):
-    # User.query_get(pk=self.kwargs["id"])
-    # user = User.objects.get(pk=self.request['pk'])
-    # if user is None:
-    #     raise ParseError("Неверный запрос!")
-
-    # permission_classes = (
-    #     partial(PermissonForRole, ROLES_PERMISSIONS.get('Users')),
-    # )
 
     @action(
         methods=['PATCH', 'GET'],
@@ -74,8 +39,6 @@ class UserModelViewSet(CreateListModelMixinViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # return User.objects.filter(pk=self.kwargs["id"])
 
 
 @api_view(['POST'])

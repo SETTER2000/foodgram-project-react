@@ -32,7 +32,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(models.Recipes)
 class RecipesAdmin(admin.ModelAdmin):
-    search_fields = ('name', 'image','text','cooking_time',)
-    list_display = ('name', 'image','text','cooking_time',)
+    search_fields = ('id','name', 'image','text','author','cooking_time',)
+    list_display = ('id','name', 'image','text','author','cooking_time',)
     list_display_list = ('name',)
     empty_value_display = EVD
