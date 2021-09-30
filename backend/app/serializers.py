@@ -10,44 +10,33 @@ class Base64ImageFieldToFile(serializers.Field):
     """ Новый тип поля в serializers.py. для преобразования base64 в файл."""
 
     def to_representation(self, value):
-        """Для чтения."""
-        print(f'KKKKKKKKKK8:::{value}')
-        filename = value
+        """Для чтения.
+        Снипет, если нужно вернуть Base64:
         value = f'{MEDIA_ROOT}/{value}'
-        # f = open(value, "rb")
         with open(value, 'rb') as f:
             str_64 = base64.standard_b64encode(f.read())
         value = (('%s' % str_64.decode().strip()))
-
-        # print(f'RESPOSE IMG::: data:image/jpeg;base64,{value}')
         b64 = f'data:image/jpeg;base64,{value}'
-        # url = f'media/{value}'
-        # print(f'MEDIA_URL IMG:::{url}')
-        print(f'RESPOSE IMG:::{filename}')
-        return f'/media/{filename}'
+        """
+        return f'/media/{value}'
 
-    # base64_str = base64.encodestring(('%s:%s' % (username,password)).encode()).decode().strip()
     def to_internal_value(self, data):
         """Для записи."""
-        print(f'SSSSS::: {data}')
+
         dir = f'{MEDIA_ROOT}/{SUB_DIR_RECIPES}'
         os.makedirs(dir, exist_ok=True)
+
         try:
             format, imgstr = data.split(';base64,')
             ext = format.split('/')[-1]
             img_data = base64.b64decode(imgstr)
             filename = f'{SUB_DIR_RECIPES}/{int(time.time())}.{ext}'
             full_file_path = f'{MEDIA_ROOT}/{filename}'
-            print(f'full_file_path:: {full_file_path}')
-            # with open(full_file_path, 'wb') as f:
-            #     f.write(img_data)
             f = open(full_file_path, 'wb')
             f.write(img_data)
             f.close()
         except ValueError:
             raise serializers.ValidationError('С картинкой проблемы.')
-        # Возвращаем данные в новом формате
-        print(f'QQQQQQQQQ:: {filename}')
         return filename
 
 
