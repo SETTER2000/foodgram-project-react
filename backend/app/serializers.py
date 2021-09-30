@@ -1,9 +1,8 @@
 import os, base64, time
-from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES,MEDIA_URL
-from coreapi.exceptions import ParseError
+
+from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 from .models import Ingredient, Tag, Recipes, User
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 
 
 class Base64ImageFieldToFile(serializers.Field):
@@ -52,10 +51,15 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
 
 
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('id', 'username', 'email', 'last_name', 'first_name')
+        model = User
+
+
 class RecipesSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField()
-    # author = serializers.SerializerMethodField()
     image = Base64ImageFieldToFile()
 
     class Meta:
@@ -71,14 +75,10 @@ class RecipesSerializer(serializers.ModelSerializer):
 
         model = Recipes
 
-    def get_author(self, obj):
-        #
-        print(f'GGGGGGGG::: {obj}')
-        user = User.objects.filter(pk=obj.author_id)
-        if user is None:
-            raise ParseError("Неверный запрос!")
-        print(f'ASSSSSQQQQQQQQQQ::: {user}')
-        return user
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["author"] = AuthorSerializer(instance.author).data
+        return representation
 
     def get_ingredients(self, obj):
         response = []
@@ -89,48 +89,5 @@ class RecipesSerializer(serializers.ModelSerializer):
             response.append(ingredients_profile.data)
         return response
 
-    # def to_internal_value(self, data):
-    #     """Для записи."""
-    #     print(f'SSSSS::: {data}')
-    #     dir = f'{MEDIA_ROOT}/recipes'
-    #     os.makedirs(dir, exist_ok=True)
-    #     try:
-    #         format, imgstr = data['image'].split(';base64,')
-    #         ext = format.split('/')[-1]
-    #         img_data = base64.b64decode(imgstr)
-    #         data = f'{dir}/{int(time.time())}.{ext}'
-    #         with open(data, 'wb') as f:
-    #             f.write(img_data)
-    #     except ValueError:
-    #         raise serializers.ValidationError('С картинкой проблемы.')
-    #     # Возвращаем данные в новом формате
-    #     print(f'QQQQQQQQQ:: {data}')
-    #     return data
-
     def create(self, validated_data):
         return Recipes.objects.create(**validated_data)
-    # def create(self, validated_data):
-    #     print(f'DDDDDDDDDDDDDD::; {validated_data}')
-    #     image = validated_data.pop('image')
-    #     data = validated_data.pop('data')
-    #     return Recipes.objects.create(data=data, image=image)
-
-    # def to_internal_value(self, data):
-    #     image = data['image']
-    #
-    #     # format, imgstr = image.split(';base64,')
-    #     # ext = format.split('/')[-1]
-    #     print(f'AAAAAAAAAAAAAAAAAA::: {data}')
-    #     # serializer = UploadedBase64ImageSerializer(data={'file': image})
-    #     # dt = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-    #     # data['image'] = dt
-    #     # print(f'FFFFF::: {serializer}')
-    #     return super(RecipesSerializer, self).to_internal_value(data)
-
-    # def create(self, validated_data):
-    #     image = validated_data.pop('image')
-    #     # print(f'DDDDDDDD::{validated_data}')
-    #     # print(f'DDDaaaaaasss::{self}')
-    #     data = validated_data.pop('data')
-    #     # return Recipes.objects.create(image=image)
-    #     return Recipes.objects.create(validated_data, image=image)
