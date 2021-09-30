@@ -1,7 +1,7 @@
 import os, base64, time
 
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
-from .models import Ingredient, Tag, Recipes, User
+from .models import Ingredient, Tag, Recipes, User, Favorite
 from rest_framework import serializers
 
 
@@ -51,7 +51,14 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
 
 
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('id', 'name', 'image', 'cooking_time')
+        model = Favorite
+
+
 class AuthorSerializer(serializers.ModelSerializer):
+    """Вложенная модель пользователя, для контроля полей в выдаче."""
     class Meta:
         fields = ('id', 'username', 'email', 'last_name', 'first_name')
         model = User
@@ -71,6 +78,8 @@ class RecipesSerializer(serializers.ModelSerializer):
             'name',
             'text',
             'author',
+            'is_favorited',
+            'is_in_shopping_cart',
             'cooking_time')
 
         model = Recipes
