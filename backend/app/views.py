@@ -3,12 +3,12 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.parsers import MultiPartParser, JSONParser
 from backend.app.filters import RecipesFilter
-from .models import Ingredient, Tag, Recipes
+from .models import Ingredient, Tag, Recipes, Favorite
 from .serializers import (IngredientSerializer, TagSerializer,
-                          RecipesSerializer)
+                          RecipesSerializer, FavoriteSerializer)
 
 
-class IngredientModelViewSet(viewsets.ModelViewSet):
+class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
     queryset = Ingredient.objects.all().order_by("-id")
     serializer_class = IngredientSerializer
@@ -17,6 +17,11 @@ class IngredientModelViewSet(viewsets.ModelViewSet):
 class TagModelViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+class FavoriteModelViewSet(viewsets.ModelViewSet):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
 
 
 class RecipesModelViewSet(viewsets.ModelViewSet):

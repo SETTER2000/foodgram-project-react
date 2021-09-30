@@ -10,19 +10,19 @@ class User(AbstractUser):
     """Модель пользователя."""
 
     class Roles(models.TextChoices):
-        ADMIN = "admin", _("Administrator")
-        USER = "user", _("User")
+        ADMIN = 'admin', _('Administrator')
+        USER = 'user', _('User')
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
 
-    email = models.EmailField(_("email address"), max_length=254, unique=True)
+    email = models.EmailField(_('email address'), max_length=254, unique=True)
     username = models.CharField(max_length=150, validators=[validate_name])
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     password = models.CharField(max_length=150)
     role = models.CharField(
-        _("role"), choices=Roles.choices, default=Roles.USER, max_length=30
+        _('role'), choices=Roles.choices, default=Roles.USER, max_length=30
     )
 
     @property
@@ -32,23 +32,12 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == "admin" or self.is_superuser
+        return self.role == 'admin' or self.is_superuser
 
 
     @property
     def is_user(self):
-        return self.role == "user"
+        return self.role == 'user'
 
     def __str__(self):
         return self.email
-
-
-class Follower(models.Model):
-    """Подписчики."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='owner')
-    subscriber = models.ForeignKey(User, on_delete=models.CASCADE,
-                                   related_name='subscriber')
-
-    def __str__(self):
-        return f'{self.subscriber} подписан на {self.user}'
