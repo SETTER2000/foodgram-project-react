@@ -1,12 +1,13 @@
-from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import TemplateView
-
+from backend.app.views import index
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
 
+    path('admin/', admin.site.urls),
+    path('', index),
     path('api/auth/', include('djoser.urls.authtoken')),
     # если раскомментить будет работать регистрация, НО перестанет работать
     # правильно остальное API.
@@ -20,3 +21,9 @@ urlpatterns = [
     #     name='redoc',
     # ),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

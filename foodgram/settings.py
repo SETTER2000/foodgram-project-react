@@ -31,8 +31,8 @@ INSTALLED_APPS = [
     'backend.users',
     'backend.app',
 
-
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -47,7 +47,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'foodgram.urls'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+# TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/build')
 
 TEMPLATES = [
     {
@@ -101,8 +102,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = ((os.path.join(BASE_DIR, 'frontend/build/static')),)
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
+# SUB_DIR_RECIPES = 'recipes/images'
 
 CORS_URLS_REGEX = r'^/api/.*$'
 
@@ -172,4 +177,5 @@ ROLES_PERMISSIONS = {
         'moderator': ('GET',),
         'anon': ('GET',),
     },
+
 }
