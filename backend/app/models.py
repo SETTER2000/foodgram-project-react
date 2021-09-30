@@ -84,3 +84,25 @@ class IngredientOfRecipes(models.Model):
                                    on_delete=models.CASCADE)
     recipe = models.ForeignKey('Recipes', on_delete=models.CASCADE)
     amount = models.IntegerField(verbose_name='Количество')
+
+# class Subscription(models.Model):
+#     following = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         verbose_name='автор',
+#         help_text='Пользователь, на которого подписываются.',
+#         related_name='follow')
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         verbose_name='подписчик',
+#         help_text='Кто подписался (Подписчик)',
+#         related_name='follower')
+#
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(
+#                 fields=['user', 'following'],
+#                 name='unique user_following',
+#             )
+#         ]
