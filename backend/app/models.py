@@ -57,9 +57,12 @@ class Recipes(models.Model):
         null=True,
         help_text='Пользователь составивший рецепт.',
         related_name='recipes')
-    ingredients = models.ManyToManyField(Ingredient,
+
+    ingredients = models.ManyToManyField('Ingredient',
                                          through='IngredientOfRecipes')
+
     tags = models.ManyToManyField('Tag', related_name='recipes', )
+
     image = models.ImageField(upload_to=SUB_DIR_RECIPES)
     name = models.CharField('Название', max_length=200, )
     text = models.TextField('Описание', )
@@ -82,7 +85,7 @@ class Recipes(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ['-id']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 

@@ -40,13 +40,6 @@ class Base64ImageFieldToFile(serializers.Field):
         return filename
 
 
-class TagSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        fields = ('id', 'name', 'color', 'slug')
-        model = Tag
-
-
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('id', 'name', 'image', 'cooking_time')
@@ -66,18 +59,27 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'name', 'measurement_unit')
+        fields = ('id', 'name', 'measurement_unit', 'ingredients_recipe')
 
     # def get_amount(self, obj):
     #     return obj.amount
 
 
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
+        fields = ('id', 'name', 'color', 'slug')
+
+
 class RecipesSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+    # tags = TagSerializer(many=True)
+    # tags = serializers.StringRelatedField(many=True, read_only=True)
     # ingredients = serializers.SerializerMethodField()
     # author = serializers.StringRelatedField(read_only=True)
     image = Base64ImageFieldToFile()
-    ingredients = IngredientSerializer(read_only=True, many=True)
+
+    # ingredients = IngredientSerializer(read_only=True, many=True)
 
     class Meta:
         model = Recipes
@@ -99,6 +101,12 @@ class RecipesSerializer(serializers.ModelSerializer):
         representation["author"] = AuthorSerializer(instance.author).data
         return representation
 
+    # def create(self, validated_data):
+    #     tracks_data = validated_data.pop('tags')
+    #     recipe = Recipes.objects.create(**validated_data)
+    #     for track_data in tracks_data:
+    #         Tag.objects.create(recipe=recipe, **track_data)
+    #     return recipe
     # def create(self, validated_data):
     #     # Если в исходном запросе не было поля ingredients
     #     if 'ingredients' not in self.initial_data:
