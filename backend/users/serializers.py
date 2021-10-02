@@ -4,7 +4,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.password_validation import validate_password
 
-from .models import User
+from .models import User, Subscriptions
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,20 +23,22 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
         )
 
-    extra_kwargs = {
-        'password': {'write_only': True}
-    }
 
-    def validate_password(self, value):
-        validate_password(value)
-        return value
+class SubscriptionsSerializer(serializers.ModelSerializer):
+    """Мои подписки."""
 
-    def create(self, validated_data):
-        user = get_user_model()(**validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        del self.fields['password']
-        return user
+    class Meta:
+        model = Subscriptions
+        fields = (
+            'id',
+            'first_name',
+            'last_name',
+            'username',
+            'password',
+            'email',
+        )
+
+
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

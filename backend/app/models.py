@@ -59,7 +59,7 @@ class Recipes(models.Model):
         related_name='recipes')
     ingredients = models.ManyToManyField(Ingredient,
                                          through='IngredientOfRecipes')
-    tags = models.ManyToManyField(Tag, verbose_name='Список тегов.', )
+    tags = models.ManyToManyField('Tag', related_name='recipes', )
     image = models.ImageField(upload_to=SUB_DIR_RECIPES)
     name = models.CharField('Название', max_length=200, )
     text = models.TextField('Описание', )
