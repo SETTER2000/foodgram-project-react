@@ -23,6 +23,21 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
         )
 
+    extra_kwargs = {
+        'password': {'write_only': True}
+    }
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+    def create(self, validated_data):
+        user = get_user_model()(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        del self.fields['password']
+        return user
+
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
     """Мои подписки."""
@@ -37,8 +52,6 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
             'password',
             'email',
         )
-
-
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
