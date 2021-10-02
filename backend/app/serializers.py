@@ -59,7 +59,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'name', 'measurement_unit', 'ingredients_recipe')
+        fields = ('id', 'name', 'measurement_unit')
 
     # def get_amount(self, obj):
     #     return obj.amount
@@ -101,12 +101,14 @@ class RecipesSerializer(serializers.ModelSerializer):
         representation["author"] = AuthorSerializer(instance.author).data
         return representation
 
-    # def create(self, validated_data):
-    #     tracks_data = validated_data.pop('tags')
-    #     recipe = Recipes.objects.create(**validated_data)
-    #     for track_data in tracks_data:
-    #         Tag.objects.create(recipe=recipe, **track_data)
-    #     return recipe
+    def create(self, validated_data):
+        tracks_data = validated_data.pop('tags')
+        recipe = Recipes.objects.create(**validated_data)
+        for track_data in tracks_data:
+            Tag.objects.create(recipe=recipe, **track_data)
+        return recipe
+
+
     # def create(self, validated_data):
     #     # Если в исходном запросе не было поля ingredients
     #     if 'ingredients' not in self.initial_data:

@@ -9,11 +9,9 @@ User = get_user_model()
 
 class Ingredient(models.Model):
     """Ингредиенты."""
-    # REQUIRED_FIELDS = ['name', 'measurement_unit']
 
     name = models.CharField(
         'Ингредиент',
-        # db_index=True,
         max_length=150)
     measurement_unit = models.CharField(max_length=150)
 
@@ -50,18 +48,6 @@ class Recipes(models.Model):
     REQUIRED_FIELDS = ['name', 'ingredients', 'tags', 'author', 'image',
                        'text',
                        'cooking_time']
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='автор',
-        null=True,
-        help_text='Пользователь составивший рецепт.',
-        related_name='recipes')
-
-    ingredients = models.ManyToManyField('Ingredient',
-                                         through='IngredientOfRecipes')
-
-    tags = models.ManyToManyField('Tag', related_name='recipes', )
 
     image = models.ImageField(upload_to=SUB_DIR_RECIPES)
     name = models.CharField('Название', max_length=200, )
@@ -81,6 +67,19 @@ class Recipes(models.Model):
                                                         'рецепты, находящиеся '
                                                         'в списке покупок.')
 
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='автор',
+        null=True,
+        help_text='Пользователь составивший рецепт.',
+        related_name='recipes')
+
+    ingredients = models.ManyToManyField('Ingredient',
+                                         through='IngredientOfRecipes')
+
+    tags = models.ManyToManyField('Tag', through='TagRecipes')
+
     def __str__(self) -> str:
         return self.name
 
@@ -90,37 +89,23 @@ class Recipes(models.Model):
         verbose_name_plural = 'Рецепты'
 
 
+class TagRecipes(models.Model):
+    """ В этой модели будут связаны id рецепта и id его тега."""
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.tag} {self.recipe}'
+
+
 class IngredientOfRecipes(models.Model):
-    """Описание ингредиента для рецепта."""
+    """ В этой модели будут связаны id рецепта и id его ингредиента."""
     ingredient = models.ForeignKey(Ingredient, verbose_name='Ингредиент',
                                    on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
-    # amount = models.IntegerField(verbose_name='Количество')
 
     def __str__(self):
         return f'{self.ingredient} {self.recipe}'
-
-# class Subscription(models.Model):
-#     following = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         verbose_name='автор',
-#         help_text='Пользователь, на которого подписываются.',
-#         related_name='follow')
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         verbose_name='подписчик',
-#         help_text='Кто подписался (Подписчик)',
-#         related_name='follower')
-#
-#     class Meta:
-#         constraints = [
-#             models.UniqueConstraint(
-#                 fields=['user', 'following'],
-#                 name='unique user_following',
-#             )
-#         ]
 
 
 class Favorite(models.Model):
