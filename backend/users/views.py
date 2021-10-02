@@ -9,9 +9,16 @@ from rest_framework.response import Response
 from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
 from .mixin import CreateListModelMixinViewSet, CreateModelMixinViewSet
 
-from .models import User
+from .models import User, Subscriptions
 from .permissions import PermissonForRole
-from .serializers import UserSerializer
+from .serializers import UserSerializer, SubscriptionsSerializer
+
+
+class SubscriptionsModelViewSet(CreateListModelMixinViewSet):
+    """Пользовательская модель пользователя с настраиваемым действием."""
+    queryset = Subscriptions.objects.all()
+    serializer_class = SubscriptionsSerializer
+
 
 
 class UserModelViewSet(CreateListModelMixinViewSet):

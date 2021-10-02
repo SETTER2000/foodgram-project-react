@@ -23,9 +23,9 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
 
     def get_queryset(self):
-        # Получаем id котика из эндпоинта
+
         recipe_id = self.kwargs.get("id")
-        # И отбираем только нужные комментарии
+
         new_queryset = Recipes.objects.filter(pk=recipe_id)
         return new_queryset
 

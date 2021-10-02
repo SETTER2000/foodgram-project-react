@@ -15,6 +15,11 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
+    subscriptions = models.ManyToManyField('self', blank=True,
+                                           symmetrical=False)
+
+    is_subscribed = models.BooleanField(default=False)
+    phone = models.CharField(max_length=20)
 
     email = models.EmailField(_('email address'), max_length=254, unique=True)
     username = models.CharField(max_length=150, validators=[validate_name])
@@ -34,10 +39,39 @@ class User(AbstractUser):
     def is_admin(self):
         return self.role == 'admin' or self.is_superuser
 
-
     @property
     def is_user(self):
         return self.role == 'user'
 
+    class Meta:
+        verbose_name='user'
+        verbose_name_plural='users'
+
     def __str__(self):
         return self.email
+
+
+class Subscriptions(models.Model):
+    """Мои подписки."""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='подписчик',
+        help_text='Пользователь, который подписывается.',
+        related_name='follower')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='автор',
+        help_text='Пользователь, на которого подписываются.',
+        related_name='following')
+
+    def __str__(self):
+        return [f'user: {self.user}, '
+                f'author: {self.author}']
+
+    class Meta:
+        db_table = 'follow_author'
+        verbose_name = 'follow'
+        ordering = ('-author',)
+        verbose_name_plural = 'Подписки'

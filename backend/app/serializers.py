@@ -41,6 +41,7 @@ class Base64ImageFieldToFile(serializers.Field):
 
 
 class TagSerializer(serializers.ModelSerializer):
+
     class Meta:
         fields = ('id', 'name', 'color', 'slug')
         model = Tag
@@ -72,7 +73,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipesSerializer(serializers.ModelSerializer):
-    # tags = TagSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
     # ingredients = serializers.SerializerMethodField()
     # author = serializers.StringRelatedField(read_only=True)
     image = Base64ImageFieldToFile()
