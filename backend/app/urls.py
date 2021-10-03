@@ -9,7 +9,9 @@ router_v1.register(r'ingredients', vs.IngredientModelViewSet,
 router_v1.register(r'tags', vs.TagModelViewSet, basename='tags')
 router_v1.register(r'recipes', vs.RecipesModelViewSet, basename='recipes')
 router_v1.register(r'recipes/(?P<id>[0-9]+)/favorite',
-                   vs.FavoriteModelViewSet, basename='favorite')
+                   vs.FavoriteModelViewSet, basename='recipes')
+router_v1.register(r'recipes/(?P<id>[0-9]+)/shopping_cart',
+                   vs.ShoppingCardModelViewSet, basename='recipes')
 
 urlpatterns = [
     # re_path(r'^', include(router_v1.urls)),
