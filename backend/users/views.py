@@ -20,7 +20,6 @@ class SubscriptionsModelViewSet(CreateListModelMixinViewSet):
     serializer_class = SubscriptionsSerializer
 
 
-
 class UserModelViewSet(CreateListModelMixinViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
     queryset = User.objects.all()

@@ -1,7 +1,7 @@
 import os, base64, time
 
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
-from .models import (Ingredient, Tag, Recipes, User, Favorite,
+from .models import (Ingredient, Tag, Recipes, User, Favorite, CHOICES,
                      IngredientRecipes)
 from rest_framework import serializers
 
@@ -58,7 +58,15 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('name', 'measurement_unit')
+        fields = ('id', 'name', 'measurement_unit')
+    #     read_only_fields = ('name','measurement_unit')  # поля только для чтения
+    #
+    # def perform_create(self, serializer):
+    #     """Чтобы передать новое значение для какого-то поля в метод save(),
+    #     нужно переопределить метод perform_create().В метод save() в полe
+    #     owner передадим объект пользователя, отправившего запрос."""
+    #     serializer.save(name=self.request.name,
+    #                     measurement_unit=self.request.measurement_unit)
 
     # def get_amount(self, obj):
     #     return obj.amount
@@ -71,13 +79,14 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipesSerializer(serializers.ModelSerializer):
-    # tags = TagSerializer(many=True)
+    tags = TagSerializer(many=True)
     # tags = serializers.StringRelatedField(many=True, read_only=True)
     # ingredients = serializers.SerializerMethodField()
     # author = serializers.StringRelatedField(read_only=True)
     image = Base64ImageFieldToFile()
+    is_favorited = serializers.ChoiceField(choices=CHOICES)
 
-    ingredients = IngredientSerializer(many=True)
+    # ingredients = IngredientSerializer(many=True, read_only=True)
 
     class Meta:
         model = Recipes
@@ -92,19 +101,41 @@ class RecipesSerializer(serializers.ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
             'cooking_time')
+        read_only_fields = ('author',)  # поля только для чтения
 
+    # def validate_is_favorited(self, value):
+    #     if value != 0:
+    #         value = 0
+    #     return value
 
-    def create(self, validated_data):
-        ingredients_data = validated_data.pop('ingredients')
-        recipe = Recipes.objects.create(**validated_data)
-        for ingredient_data in ingredients_data:
-            Ingredient.objects.create(recipe=recipe, **ingredient_data)
-        return recipe
+    # def create(self, validated_data):
+    #     ingredients = validated_data.pop('ingredients')
+    #     instance = super(RecipesSerializer, self).create(validated_data)
+    #     for item in ingredients:
+    #         instance.ingredients.add(item['id'])
+    #     instance.save()
+    #     return instance
+
+    # def create(self, validated_data):
+    #     ingredients_data = validated_data.pop('ingredients')
+    #     recipe = Recipes.objects.create(**validated_data)
+    #     for ingredient_data in ingredients_data:
+    #         Ingredient.objects.create(recipe=recipe, **ingredient_data)
+    #     return recipe
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation["author"] = AuthorSerializer(instance.author).data
         return representation
+
+    def perform_create(self, serializer):
+        """Чтобы передать новое значение для какого-то поля в метод save(),
+        нужно переопределить метод perform_create().В метод save() в полe
+        owner передадим объект пользователя, отправившего запрос."""
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
 
     #  def create(self, validated_data):
     #     tracks_data = validated_data.pop('tags')

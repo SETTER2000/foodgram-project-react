@@ -5,6 +5,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from foodgram.settings import SUB_DIR_RECIPES
 
 User = get_user_model()
+CHOICES = (
+    (0, 1),
+    (1, 0)
+)
 
 
 class Ingredient(models.Model):
@@ -62,14 +66,16 @@ class Recipes(models.Model):
             MaxValueValidator(10000),
             MinValueValidator(1)])
 
-    is_favorited = models.BooleanField(
-        'Фаворит',
-        default=True,
-        help_text='Показывать только рецепты, находящиеся в списке '
-                  'избранного.')
-    is_in_shopping_cart = models.BooleanField(
-        'Покупка',
-        default=True,
+    is_favorited = models.IntegerField(
+        'Находится ли в избранном',
+        default=0,
+        choices=CHOICES,
+        help_text='Показывать только рецепты, находящиеся в списке избранного.'
+    )
+    is_in_shopping_cart = models.IntegerField(
+        'Находится ли в покупках',
+        default=0,
+        choices=CHOICES,
         help_text='Показывать только рецепты, находящиеся в списке покупок.')
 
     author = models.ForeignKey(
