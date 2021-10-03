@@ -50,22 +50,27 @@ class Recipes(models.Model):
                        'cooking_time']
 
     image = models.ImageField(upload_to=SUB_DIR_RECIPES)
+
     name = models.CharField('Название', max_length=200, )
+
     text = models.TextField('Описание', )
-    cooking_time = models.IntegerField('Время приготовления (в минутах)',
-                                       default=1,
-                                       validators=[
-                                           MaxValueValidator(10000),
-                                           MinValueValidator(1)
-                                       ])
-    is_favorited = models.BooleanField('Фаворит', default=True,
-                                       help_text='Показывать только рецепты, '
-                                                 'находящиеся в списке '
-                                                 'избранного.')
-    is_in_shopping_cart = models.BooleanField('Покупка', default=True,
-                                              help_text='Показывать только '
-                                                        'рецепты, находящиеся '
-                                                        'в списке покупок.')
+
+    cooking_time = models.IntegerField(
+        'Время приготовления (в минутах)',
+        default=1,
+        validators=[
+            MaxValueValidator(10000),
+            MinValueValidator(1)])
+
+    is_favorited = models.BooleanField(
+        'Фаворит',
+        default=True,
+        help_text='Показывать только рецепты, находящиеся в списке '
+                  'избранного.')
+    is_in_shopping_cart = models.BooleanField(
+        'Покупка',
+        default=True,
+        help_text='Показывать только рецепты, находящиеся в списке покупок.')
 
     author = models.ForeignKey(
         User,
@@ -75,10 +80,14 @@ class Recipes(models.Model):
         help_text='Пользователь составивший рецепт.',
         related_name='recipes')
 
-    ingredients = models.ManyToManyField('Ingredient',
-                                         through='IngredientOfRecipes')
+    ingredients = models.ManyToManyField(
+        'Ingredient',
+        related_name='ingredients_recipe',
+        through='IngredientRecipes')
 
-    tags = models.ManyToManyField('Tag', through='TagRecipes')
+    tags = models.ManyToManyField(
+        'Tag',
+        related_name='recipes')
 
     def __str__(self) -> str:
         return self.name
@@ -89,16 +98,17 @@ class Recipes(models.Model):
         verbose_name_plural = 'Рецепты'
 
 
-class TagRecipes(models.Model):
-    """ В этой модели будут связаны id рецепта и id его тега."""
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+#
+# class TagRecipes(models.Model):
+#     """ В этой модели будут связаны id рецепта и id его тега."""
+#     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+#     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return f'{self.tag} {self.recipe}'
 
-    def __str__(self):
-        return f'{self.tag} {self.recipe}'
 
-
-class IngredientOfRecipes(models.Model):
+class IngredientRecipes(models.Model):
     """ В этой модели будут связаны id рецепта и id его ингредиента."""
     ingredient = models.ForeignKey(Ingredient, verbose_name='Ингредиент',
                                    on_delete=models.CASCADE)
