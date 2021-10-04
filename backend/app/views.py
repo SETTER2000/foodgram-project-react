@@ -1,18 +1,13 @@
-from django.http import Http404
+from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from rest_framework import viewsets, status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import action, api_view
-from rest_framework.generics import get_object_or_404
-from rest_framework.parsers import MultiPartParser, JSONParser
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
+from rest_framework import viewsets
+from rest_framework.parsers import JSONParser, MultiPartParser
 from backend.app.filters import RecipesFilter
-from backend.app.mixin import UpdateDeleteViewSet
-from .models import Ingredient, Tag, Recipes, Favorite
-from .serializers import (IngredientSerializer, TagSerializer,
-                          RecipesSerializer, FavoriteSerializer)
+from .models import Favorite, Ingredient, Recipes, Tag
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipesSerializer, TagSerializer)
+
+User = get_user_model()
 
 
 class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,26 +25,32 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
 
-    def get_queryset(self):
-        print(f'DDDDDDDDDcccccccDDDDDDDDDDDD::::;')
-        recipe_id = self.kwargs.get("id")
-        new_queryset = Recipes.objects.filter(pk=recipe_id)
-        new_queryset.update(is_favorited=1)
-        return new_queryset
-
-    # Пишем метод, а в декораторе разрешим работу со списком объектов
-    # и переопределим URL на более презентабельный
-
-    @action(methods=['delete'], detail=False,
-            url_path='/api/recipes/6/favorite/')
-    def del_white_cats(self, request):
-        print(f'DDD1222222DDDDD::::;{request}')
-        # Нужны только последние пять котиков белого цвета
-        cats = Recipes.objects.filter(color='White')[:5]
-        # Передадим queryset cats сериализатору
-        # и разрешим работу со списком объектов
-        serializer = self.get_serializer(cats, many=True)
-        return Response(serializer.data)
+    # def get_queryset(self):
+    #     user = get_object_or_404(User, email=self.request.user)
+    #     recipe_id = self.kwargs.get("id")
+    #     # rc2.is_favorited.add(us[3])
+    #
+    #     new_queryset = Recipes.objects.filter(pk=recipe_id)
+    #     user.favorite_recipe.add(new_queryset)
+    #     print(f'FSSSSSSSSS:::{new_queryset}')
+    #
+    #     # new_queryset.objects.add(self.request.user)
+    #     # new_queryset.update(is_favorited=1)
+    #     return new_queryset
+    #
+    # # Пишем метод, а в декораторе разрешим работу со списком объектов
+    # # и переопределим URL на более презентабельный
+    #
+    # @action(methods=['delete'], detail=False,
+    #         url_path='/api/recipes/6/favorite/')
+    # def del_white_cats(self, request):
+    #     print(f'DDD1222222DDDDD::::;{request}')
+    #     # Нужны только последние пять котиков белого цвета
+    #     cats = Recipes.objects.filter(color='White')[:5]
+    #     # Передадим queryset cats сериализатору
+    #     # и разрешим работу со списком объектов
+    #     serializer = self.get_serializer(cats, many=True)
+    #     return Response(serializer.data)
 
 
 # def destroy(self, request, *args, **kwargs):

@@ -10,12 +10,12 @@ EVD = '-пусто-'
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name',
-                    'is_staff', 'phone', 'is_subscribed')
+                    'is_staff', 'is_subscribed')
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email',
-                                         'phone', 'is_subscribed')}),
+                                         'is_subscribed')}),
         (_('subscriptions'), {'fields': ('subscriptions',)}),
 
         (_('Permissions'), {

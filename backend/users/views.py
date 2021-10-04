@@ -6,12 +6,13 @@ from django.utils.crypto import get_random_string
 from rest_framework import permissions, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
-from .mixin import CreateListModelMixinViewSet, CreateModelMixinViewSet
 
-from .models import User, Subscriptions
+from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
+
+from .mixin import CreateListModelMixinViewSet, CreateModelMixinViewSet
+from .models import Subscriptions, User
 from .permissions import PermissonForRole
-from .serializers import UserSerializer, SubscriptionsSerializer
+from .serializers import SubscriptionsSerializer, UserSerializer
 
 
 class SubscriptionsModelViewSet(CreateListModelMixinViewSet):

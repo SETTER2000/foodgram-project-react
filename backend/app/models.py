@@ -1,22 +1,19 @@
-from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from foodgram.settings import SUB_DIR_RECIPES
 
 User = get_user_model()
-CHOICES = (
-    (0, 1),
-    (1, 0)
-)
-
 
 class Ingredient(models.Model):
-    """Ингредиенты."""
+    """Ингредиенты входящие в состав рецепта."""
 
     name = models.CharField(
         'Ингредиент',
         max_length=150)
+
     measurement_unit = models.CharField(max_length=150)
 
     def __str__(self) -> str:
@@ -29,12 +26,15 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
+    """Теги рецепта."""
+
     name = models.TextField(
         'Название тега',
         max_length=70,
         unique=True,
         db_index=True
     )
+
     color = models.CharField('Цветовой HEX-код', unique=True, max_length=7)
     slug = models.SlugField('URL', unique=True)
 
@@ -49,14 +49,18 @@ class Tag(models.Model):
 
 class Recipes(models.Model):
     """Рецепты блюд."""
-    REQUIRED_FIELDS = ['name', 'ingredients', 'tags', 'author', 'image',
-                       'text',
-                       'cooking_time']
+
+    # REQUIRED_FIELDS = [
+    #     'name',
+    #     'ingredients',
+    #     'tags',
+    #     'author',
+    #     'image',
+    #     'text',
+    #     'cooking_time']
 
     image = models.ImageField(upload_to=SUB_DIR_RECIPES)
-
     name = models.CharField('Название', max_length=200, )
-
     text = models.TextField('Описание', )
 
     cooking_time = models.IntegerField(
@@ -66,16 +70,27 @@ class Recipes(models.Model):
             MaxValueValidator(10000),
             MinValueValidator(1)])
 
-    is_favorited = models.IntegerField(
-        'Находится ли в избранном',
-        default=0,
-        choices=CHOICES,
-        help_text='Показывать только рецепты, находящиеся в списке избранного.'
+    # class Rating(models.IntegerChoices):
+    #     LOW = 1, _('low')
+    #     MIDDLE = 2, _('midle')
+    #     HIGH = 3, _('high')
+    #     __empty__ = _('no rating')
+    #
+    # rating = models.PositiveSmallIntegerField(
+    #     _('rating'),
+    #     choices=Rating.choices,
+    #     blank=True, null=True)
+
+    is_favorited = models.ManyToManyField(
+        'users.User',
+        related_name='favorite_recipe',
+        help_text='Представлен, лоигны пользователей, кто добавил этот '
+                  'рецепт себе в избранное.'
     )
-    is_in_shopping_cart = models.IntegerField(
-        'Находится ли в покупках',
-        default=0,
-        choices=CHOICES,
+
+    is_in_shopping_cart = models.ManyToManyField(
+        'users.User',
+        related_name='shopping_recipe',
         help_text='Показывать только рецепты, находящиеся в списке покупок.')
 
     author = models.ForeignKey(
@@ -104,7 +119,6 @@ class Recipes(models.Model):
         verbose_name_plural = 'Рецепты'
 
 
-#
 # class TagRecipes(models.Model):
 #     """ В этой модели будут связаны id рецепта и id его тега."""
 #     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
@@ -116,8 +130,9 @@ class Recipes(models.Model):
 
 class IngredientRecipes(models.Model):
     """ В этой модели будут связаны id рецепта и id его ингредиента."""
-    ingredient = models.ForeignKey(Ingredient, verbose_name='Ингредиент',
-                                   on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(
+        Ingredient, verbose_name='Ингредиент',
+        on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -127,12 +142,14 @@ class IngredientRecipes(models.Model):
 class Favorite(models.Model):
     """Избранные рецепты."""
     name = models.CharField('Название', max_length=200, )
-    image = models.CharField('Картинка рецепта',
-                             help_text='Ссылка на картинку на сайте',
-                             max_length=200, )
-    cooking_time = models.IntegerField('Время приготовления (в минутах)',
-                                       default=1,
-                                       validators=[MinValueValidator(1)])
+    image = models.CharField(
+        'Картинка рецепта',
+        help_text='Ссылка на картинку на сайте',
+        max_length=200, )
+    cooking_time = models.IntegerField(
+        'Время приготовления (в минутах)',
+        default=1,
+        validators=[MinValueValidator(1)])
 
     def __str__(self) -> str:
         return self.name
@@ -145,10 +162,13 @@ class Favorite(models.Model):
 
 class Follower(models.Model):
     """Подписчики."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='owner')
-    subscriber = models.ForeignKey(User, on_delete=models.CASCADE,
-                                   related_name='subscriber')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='owner')
+    subscriber = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='subscriber')
 
     def __str__(self):
         return f'{self.subscriber} подписан на {self.user}'

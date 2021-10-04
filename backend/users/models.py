@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.core.validators import RegexValidator
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 validate_name = RegexValidator('^[\w.@+-]+$')
@@ -15,11 +15,12 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
-    subscriptions = models.ManyToManyField('self', blank=True,
-                                           symmetrical=False)
+    subscriptions = models.ManyToManyField(
+        'self',
+        blank=True,
+        symmetrical=False)
 
     is_subscribed = models.BooleanField(default=False)
-    phone = models.CharField(max_length=20)
 
     email = models.EmailField(_('email address'), max_length=254, unique=True)
     username = models.CharField(max_length=150, validators=[validate_name])

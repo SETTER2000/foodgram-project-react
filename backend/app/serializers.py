@@ -1,9 +1,13 @@
-import os, base64, time
+import base64
+import os
+import time
+
+from rest_framework import serializers
 
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
-from .models import (Ingredient, Tag, Recipes, User, Favorite, CHOICES,
-                     IngredientRecipes)
-from rest_framework import serializers
+
+from .models import (CHOICES, Favorite, Ingredient, IngredientRecipes, Recipes,
+                     Tag, User)
 
 
 class Base64ImageFieldToFile(serializers.Field):
@@ -43,6 +47,13 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('id', 'name', 'image', 'cooking_time')
         model = Favorite
+
+    # def perform_create(self, serializer):
+    #     # rc2.is_favorited.add(us[3])
+    #     """Чтобы передать новое значение для какого-то поля в метод save(),
+    #     нужно переопределить метод perform_create().В метод save() в полe
+    #     author передадим объект пользователя, отправившего запрос."""
+    #     serializer.save(is_favorited=self.request.user)
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -84,7 +95,10 @@ class RecipesSerializer(serializers.ModelSerializer):
     # ingredients = serializers.SerializerMethodField()
     # author = serializers.StringRelatedField(read_only=True)
     image = Base64ImageFieldToFile()
-    is_favorited = serializers.ChoiceField(choices=CHOICES)
+    is_favorited = serializers.SerializerMethodField()
+    # is_in_shopping_cart = serializers.SerializerMethodField()
+
+    # is_favorited = serializers.ChoiceField(choices=CHOICES)
 
     # ingredients = IngredientSerializer(many=True, read_only=True)
 
@@ -103,10 +117,15 @@ class RecipesSerializer(serializers.ModelSerializer):
             'cooking_time')
         read_only_fields = ('author',)  # поля только для чтения
 
-    # def validate_is_favorited(self, value):
-    #     if value != 0:
-    #         value = 0
-    #     return value
+    # def get_is_in_shopping_cart(self, obj):
+    #     print(f'SELFF:::: {self}')
+    #     print(f'obj:::: {obj.__dict__}')
+    #
+
+    def get_is_favorited(self, obj):
+        """Устанавливает флаг для избранных рецептов."""
+        email = self.context["request"].user
+        return len(obj.is_favorited.filter(email=email))
 
     # def create(self, validated_data):
     #     ingredients = validated_data.pop('ingredients')
@@ -129,9 +148,10 @@ class RecipesSerializer(serializers.ModelSerializer):
         return representation
 
     def perform_create(self, serializer):
+        # rc2.is_favorited.add(us[3])
         """Чтобы передать новое значение для какого-то поля в метод save(),
         нужно переопределить метод perform_create().В метод save() в полe
-        owner передадим объект пользователя, отправившего запрос."""
+        author передадим объект пользователя, отправившего запрос."""
         serializer.save(author=self.request.user)
 
     def perform_update(self, serializer):
