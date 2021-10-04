@@ -7,6 +7,7 @@ from foodgram.settings import SUB_DIR_RECIPES
 
 User = get_user_model()
 
+
 class Ingredient(models.Model):
     """Ингредиенты входящие в состав рецепта."""
 

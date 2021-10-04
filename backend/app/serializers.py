@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 
-from .models import (CHOICES, Favorite, Ingredient, IngredientRecipes, Recipes,
+from .models import (Favorite, Ingredient, IngredientRecipes, Recipes,
                      Tag, User)
 
 
