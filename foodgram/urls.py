@@ -10,8 +10,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index),
     path('api/auth/', include('djoser.urls.authtoken')),
-    path('api/', include('backend.users.urls')),
-    path('api/', include('backend.app.urls')),
+    # path('api/', include('backend.users.urls')),
+    # path('api/', include('backend.app.urls')),
+    path('api/', include('backend.app.urls', namespace='backend.app')),
+    path('api/', include('backend.users.urls', namespace='backend.users')),
     path('api/', include('djoser.urls')),
 ]
 

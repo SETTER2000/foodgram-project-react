@@ -96,6 +96,7 @@ class RecipesSerializer(serializers.ModelSerializer):
     # author = serializers.StringRelatedField(read_only=True)
     image = Base64ImageFieldToFile()
     is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     # is_in_shopping_cart = serializers.SerializerMethodField()
 
     # is_favorited = serializers.ChoiceField(choices=CHOICES)
@@ -126,6 +127,11 @@ class RecipesSerializer(serializers.ModelSerializer):
         """Устанавливает флаг для избранных рецептов."""
         email = self.context["request"].user
         return len(obj.is_favorited.filter(email=email))
+
+    def get_is_in_shopping_cart(self, obj):
+        """Устанавливает флаг для купленных рецептов."""
+        email = self.context["request"].user
+        return len(obj.is_in_shopping_cart.filter(email=email))
 
     # def create(self, validated_data):
     #     ingredients = validated_data.pop('ingredients')
