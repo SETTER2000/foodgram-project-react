@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from rest_framework.decorators import action
 
 from foodgram.settings import SUB_DIR_RECIPES
 
@@ -104,7 +105,6 @@ class Recipes(models.Model):
 
     ingredients = models.ManyToManyField(
         'Ingredient',
-        related_name='ingredients_recipe',
         through='IngredientRecipes')
 
     tags = models.ManyToManyField(
@@ -114,26 +114,27 @@ class Recipes(models.Model):
     def __str__(self) -> str:
         return self.name
 
+
+
+
     class Meta:
         ordering = ['-id']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
 
-# class TagRecipes(models.Model):
-#     """ В этой модели будут связаны id рецепта и id его тега."""
-#     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-#     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return f'{self.tag} {self.recipe}'
+class TagRecipes(models.Model):
+    """ В этой модели будут связаны id рецепта и id его тега."""
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.tag} {self.recipe}'
 
 
 class IngredientRecipes(models.Model):
     """ В этой модели будут связаны id рецепта и id его ингредиента."""
-    ingredient = models.ForeignKey(
-        Ingredient, verbose_name='Ингредиент',
-        on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
 
     def __str__(self):

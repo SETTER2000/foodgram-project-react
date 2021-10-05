@@ -1,6 +1,12 @@
+from coreapi.utils import File
 from django.contrib.auth import get_user_model
+from django.http import HttpResponse
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from django.shortcuts import render
-from rest_framework import viewsets
+from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
+from rest_framework import viewsets, generics, renderers
+from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser, MultiPartParser
 from backend.app.filters import RecipesFilter
 from .models import Favorite, Ingredient, Recipes, Tag
@@ -101,19 +107,58 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, JSONParser)
     filterset_class = RecipesFilter
 
+    @action(detail=True, methods=['put'])
+    def tags(self, request, pk=None):
+        user = self.get_object()
+        tags = user.tags
+        serializer = TagSerializer(tags, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)
+
+    # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    # def highlight(self, request, *args, **kwargs):
+    #     recipes = self.get_object()
+    #     return Response(recipes.highlighted)
+    #
+    # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    # def download_pdf(request):
+    #     path_to_file = MEDIA_ROOT + '/filename.pdf'
+    #     f = open(path_to_file, 'rb')
+    #     pdf_file = File(f)
+    #     response = HttpResponse(pdf_file.read())
+    #     response['Content-Disposition'] = 'attachment;'
+    #     return response
+
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+@api_view(['GET'])
+def download_pdf(request):
+    path_to_file = MEDIA_ROOT + '/filename.pdf'
+    f = open(path_to_file, 'rb')
+    pdf_file = File(f)
+    response = HttpResponse(pdf_file.read())
+    response['Content-Disposition'] = 'attachment;'
+    return response
 
 
 def index(request):
     return render(request, 'index.html', {})
 
-#
-# @api_view(['DELETE'])
-# def del_favor(request):
-#     print(f'DDDDDDDDDDDDDDDDDDDDD::::;{request}')
-#     #     try:
-#     #         instance = self.get_object()
-#     #     except Http404:
-#     #         pass
-#     #     return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['DELETE'])
+def del_favor(request):
+    print(f'DDDDDDDDDDDDDDDDDDDDD::::;{request}')
+    #     try:
+    #         instance = self.get_object()
+    #     except Http404:
+    #         pass
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
