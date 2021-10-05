@@ -111,6 +111,7 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     def tags(self, request, pk=None):
         user = self.get_object()
         tags = user.tags
+        print(f'tags:::::::::::::{tags}')
         serializer = TagSerializer(tags, data=request.data)
         if serializer.is_valid():
             serializer.save()
