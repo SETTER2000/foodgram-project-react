@@ -90,17 +90,16 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipesSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True)
+    # tags = TagSerializer(many=True)
     # tags = serializers.StringRelatedField(many=True, read_only=True)
+    ingredients = IngredientSerializer(many=True, read_only=True)
     # ingredients = serializers.SerializerMethodField()
     # author = serializers.StringRelatedField(read_only=True)
     image = Base64ImageFieldToFile()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     # is_in_shopping_cart = serializers.SerializerMethodField()
-
     # is_favorited = serializers.ChoiceField(choices=CHOICES)
-
     # ingredients = IngredientSerializer(many=True, read_only=True)
 
     class Meta:
@@ -116,12 +115,7 @@ class RecipesSerializer(serializers.ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
             'cooking_time')
-        read_only_fields = ('author',)  # поля только для чтения
-
-    # def get_is_in_shopping_cart(self, obj):
-    #     print(f'SELFF:::: {self}')
-    #     print(f'obj:::: {obj.__dict__}')
-    #
+        read_only_fields = ('author',)
 
     def get_is_favorited(self, obj):
         """Устанавливает флаг для избранных рецептов."""
@@ -132,21 +126,6 @@ class RecipesSerializer(serializers.ModelSerializer):
         """Устанавливает флаг для купленных рецептов."""
         email = self.context["request"].user
         return len(obj.is_in_shopping_cart.filter(email=email))
-
-    # def create(self, validated_data):
-    #     ingredients = validated_data.pop('ingredients')
-    #     instance = super(RecipesSerializer, self).create(validated_data)
-    #     for item in ingredients:
-    #         instance.ingredients.add(item['id'])
-    #     instance.save()
-    #     return instance
-
-    # def create(self, validated_data):
-    #     ingredients_data = validated_data.pop('ingredients')
-    #     recipe = Recipes.objects.create(**validated_data)
-    #     for ingredient_data in ingredients_data:
-    #         Ingredient.objects.create(recipe=recipe, **ingredient_data)
-    #     return recipe
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

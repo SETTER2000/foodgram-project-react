@@ -6,7 +6,7 @@ EVD = '-пусто-'
 
 
 @admin.register(models.Ingredient)
-class IntegrationAdmin(admin.ModelAdmin):
+class IngredientAdmin(admin.ModelAdmin):
     search_fields = ('name', 'measurement_unit',)
     list_display = ('id', 'name', 'measurement_unit',)
     list_display_list = ('name',)
