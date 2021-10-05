@@ -90,7 +90,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipesSerializer(serializers.ModelSerializer):
-    # tags = TagSerializer(many=True)
+    tags = TagSerializer(many=True, read_only=True)
     # tags = serializers.StringRelatedField(many=True, read_only=True)
     ingredients = IngredientSerializer(many=True, read_only=True)
     # ingredients = serializers.SerializerMethodField()
