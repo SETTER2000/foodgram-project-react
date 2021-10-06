@@ -114,9 +114,6 @@ class Recipes(models.Model):
     def __str__(self) -> str:
         return self.name
 
-
-
-
     class Meta:
         ordering = ['-id']
         verbose_name = 'Рецепт'
@@ -161,16 +158,16 @@ class Favorite(models.Model):
         verbose_name = 'Фаворит'
         verbose_name_plural = 'Фавориты'
 
-
-class Follower(models.Model):
-    """Подписчики."""
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='owner')
-    subscriber = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        related_name='subscriber')
-
-    def __str__(self):
-        return f'{self.subscriber} подписан на {self.user}'
+#
+# class Follower(models.Model):
+#     """Подписчики."""
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='owner')
+#     subscriber = models.ForeignKey(
+#         User, on_delete=models.CASCADE,
+#         related_name='subscriber')
+#
+#     def __str__(self):
+#         return f'{self.subscriber} подписан на {self.user}'
