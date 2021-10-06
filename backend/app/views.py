@@ -2,6 +2,7 @@ from coreapi.utils import File
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from django.shortcuts import render
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
@@ -35,7 +36,15 @@ class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
 class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['tags']
     paginator = None
+
+    # def get_queryset(self):
+    #     print(f'self.request.query_params::: {self.request.query_params}')
+    #     qs = super().get_queryset()
+    #     slug = self.request.query_params.get('slug')
+    #     return qs.filter(results__tags__iexact=slug)
     # def list(self, request):
     #     tags_data = Tag.objects.all()
     #
