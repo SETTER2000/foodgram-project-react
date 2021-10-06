@@ -104,11 +104,12 @@ class Recipes(models.Model):
         related_name='recipes')
 
     ingredients = models.ManyToManyField(
-        'Ingredient',
-        through='IngredientRecipes')
+        'Ingredient',blank=True,
+        related_name='recipes')
+        # through='IngredientRecipes')
 
     tags = models.ManyToManyField(
-        'Tag',
+        'Tag', blank=True,
         related_name='recipes')
 
     def __str__(self) -> str:
