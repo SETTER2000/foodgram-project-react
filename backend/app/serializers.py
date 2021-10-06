@@ -90,9 +90,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipesSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+    # tags = TagSerializer(many=True, read_only=True)
     # tags = serializers.StringRelatedField(many=True, read_only=True)
-    ingredients = IngredientSerializer(many=True, read_only=True)
+    # ingredients = IngredientSerializer(many=True, read_only=True)
     # ingredients = serializers.SerializerMethodField()
     # author = serializers.StringRelatedField(read_only=True)
     image = Base64ImageFieldToFile()
@@ -128,6 +128,7 @@ class RecipesSerializer(serializers.ModelSerializer):
         return len(obj.is_in_shopping_cart.filter(email=email))
 
     def to_representation(self, instance):
+        """Добавляет автора рецепта при создании."""
         representation = super().to_representation(instance)
         representation["author"] = AuthorSerializer(instance.author).data
         return representation

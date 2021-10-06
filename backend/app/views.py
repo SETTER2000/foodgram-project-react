@@ -133,10 +133,6 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     #     response['Content-Disposition'] = 'attachment;'
     #     return response
 
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -151,10 +147,6 @@ def download_pdf(request):
     return response
 
 
-def index(request):
-    return render(request, 'index.html', {})
-
-
 @api_view(['DELETE'])
 def del_favor(request):
     print(f'DDDDDDDDDDDDDDDDDDDDD::::;{request}')
@@ -163,3 +155,8 @@ def del_favor(request):
     #     except Http404:
     #         pass
     #     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+def index(request):
+    return render(request, 'index.html', {})
