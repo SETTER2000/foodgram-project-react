@@ -22,7 +22,7 @@ class Ingredient(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ['name']
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
@@ -104,9 +104,9 @@ class Recipes(models.Model):
         related_name='recipes')
 
     ingredients = models.ManyToManyField(
-        'Ingredient',blank=True,
+        'Ingredient', blank=True,
         related_name='recipes')
-        # through='IngredientRecipes')
+    # through='IngredientRecipes')
 
     tags = models.ManyToManyField(
         'Tag', blank=True,
@@ -137,6 +137,8 @@ class IngredientRecipes(models.Model):
 
     def __str__(self):
         return f'{self.ingredient} {self.recipe}'
+
+
 
 
 class Favorite(models.Model):

@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 from rest_framework import viewsets, generics, renderers
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser, MultiPartParser
 from backend.app.filters import RecipesFilter
@@ -16,15 +17,35 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
 User = get_user_model()
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    # Класс ModelViewSet предоставляет следующие действия: .list ()
+    # .retrieve (), .create (), .update (), .partial_update () и .destroy ()
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
 class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
     queryset = Ingredient.objects.all().order_by("-id")
     serializer_class = IngredientSerializer
+    paginator = None
 
 
-class TagModelViewSet(viewsets.ModelViewSet):
+class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    paginator = None
+    # def list(self, request):
+    #     tags_data = Tag.objects.all()
+    #
+    #     page = self.paginate_queryset(tags_data)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #
+    #     serializer = self.get_serializer(tags_data, many=True)
+    #     return Response(serializer.data)
 
 
 class FavoriteModelViewSet(viewsets.ModelViewSet):
@@ -155,7 +176,6 @@ def del_favor(request):
     #     except Http404:
     #         pass
     #     return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 
 def index(request):

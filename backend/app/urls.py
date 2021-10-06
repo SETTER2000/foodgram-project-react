@@ -1,7 +1,7 @@
-from django.urls import include, path, re_path
+from django.urls import path
 from rest_framework import routers
 from . import views as vs
-from rest_framework import renderers
+
 app_name = 'backend.app'
 
 # recipes_list = vs.RecipesModelViewSet.as_view({
@@ -44,6 +44,7 @@ urlpatterns = [
     # re_path(r'^', include(router_v1.urls)),
     # path('recipes/download_shopping_cart/',  vs.download_pdf,
     #      name='download_pdf')
+
 ]
 
 urlpatterns += router_v1.urls
