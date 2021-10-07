@@ -95,8 +95,17 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 
+# class IngredientRecipesSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Tag
+#         fields = ('name', 'measurement_unit')
+
+
 class RecipesSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
+    # ingredients = IngredientRecipesSerializer(
+    #     source='ingredient_for_recipes',
+    #     many=True)
     # tags = serializers.StringRelatedField(many=True, read_only=True)
     ingredients = IngredientSerializer(many=True, read_only=True)
     # ingredients = serializers.SerializerMethodField()

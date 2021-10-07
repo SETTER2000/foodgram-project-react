@@ -133,9 +133,11 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesSerializer
     # authentication_classes = (TokenAuthentication,)
-    parser_classes = (MultiPartParser, JSONParser)
-    filter_backends = (DjangoFilterBackend, SearchFilter, )
+    # parser_classes = (MultiPartParser, JSONParser)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipesFilter
+
+
 
     @action(detail=True, methods=['put'])
     def tags(self, request, pk=None):
