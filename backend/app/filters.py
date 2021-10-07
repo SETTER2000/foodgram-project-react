@@ -1,5 +1,6 @@
 # import django_filters
 from django_filters import rest_framework as filters
+from django.db.models import Q
 
 from .models import Recipes, Tag
 
@@ -11,7 +12,7 @@ class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
 class RecipesFilter(filters.FilterSet):
     # year = filters.NumberFilter(field_name='year', lookup_expr='exact')
     # name = filters.CharFilter(field_name='name', lookup_expr='icontains')
-    tags = CharFilterInFilter(field_name='tags__slug')
+    tags = CharFilterInFilter(field_name='tags__slug', lookup_expr='in')
 
     class Meta:
         model = Recipes

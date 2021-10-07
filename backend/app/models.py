@@ -52,14 +52,13 @@ class Tag(models.Model):
 class Recipes(models.Model):
     """Рецепты блюд."""
 
-    # REQUIRED_FIELDS = [
-    #     'name',
-    #     'ingredients',
-    #     'tags',
-    #     'author',
-    #     'image',
-    #     'text',
-    #     'cooking_time']
+    REQUIRED_FIELDS = [
+        'name',
+        'ingredients',
+        'tags',
+        'image',
+        'text',
+        'cooking_time']
 
     image = models.ImageField(upload_to=SUB_DIR_RECIPES)
     name = models.CharField('Название', max_length=200, )
@@ -85,6 +84,7 @@ class Recipes(models.Model):
 
     is_favorited = models.ManyToManyField(
         'users.User',
+        blank=True,
         related_name='favorite_recipe',
         help_text='Представлен, лоигны пользователей, кто добавил этот '
                   'рецепт себе в избранное.'
@@ -92,6 +92,7 @@ class Recipes(models.Model):
 
     is_in_shopping_cart = models.ManyToManyField(
         'users.User',
+        blank=True,
         related_name='shopping_recipe',
         help_text='Показывать только рецепты, находящиеся в списке покупок.')
 
