@@ -34,9 +34,9 @@ router_v1.register(r'ingredients', vs.IngredientModelViewSet,
 router_v1.register(r'tags', vs.TagModelViewSet, basename='tags')
 router_v1.register(r'recipes', vs.RecipesModelViewSet, basename='recipes')
 router_v1.register(r'recipes/(?P<id>[0-9]+)/favorite',
-                   vs.FavoriteModelViewSet, basename='recipes')
+                   vs.FavoriteModelViewSet, basename='favorite')
 router_v1.register(r'recipes/(?P<id>[0-9]+)/shopping_cart',
-                   vs.ShoppingCardModelViewSet, basename='recipes')
+                   vs.ShoppingCardModelViewSet, basename='shopping_cart')
 # router_v1.register(r'recipes/download_shopping_cart',
 #                    vs.download_pdf.as_view(), basename='download_pdf')
 

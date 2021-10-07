@@ -43,6 +43,12 @@ class Base64ImageFieldToFile(serializers.Field):
         return filename
 
 
+class ShoppingSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('id', 'name', 'image', 'cooking_time')
+        model = Favorite
+
+
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('id', 'name', 'image', 'cooking_time')

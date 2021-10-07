@@ -122,6 +122,12 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
+    # 'DEFAULT_RENDERER_CLASSES': [
+    #     'rest_framework.renderers.JSONRenderer',
+    # ],
+    # 'DEFAULT_PARSER_CLASSES': [
+    #     'rest_framework.parsers.JSONParser',
+    # ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
 }
@@ -135,6 +141,7 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_ID_FIELD': 'id',
 }
+
 
 SILENCED_SYSTEM_CHECKS = ['auth.E003', 'auth.W004']
 
@@ -157,7 +164,7 @@ ROLES_PERMISSIONS = {
         'moderator': ('GET', 'PATCH', 'DELETE', 'POST', 'PUT'),
         'anon': ('GET',),
     },
-    'Comments': {
+    'Shopping': {
         'user': ('GET', 'POST'),
         'moderator': ('GET', 'PATCH', 'DELETE', 'POST', 'PUT'),
         'anon': ('GET',),
@@ -167,7 +174,7 @@ ROLES_PERMISSIONS = {
         'moderator': ('GET',),
         'anon': ('GET',),
     },
-    'Genres': {
+    'Tag': {
         'user': ('GET',),
         'moderator': ('GET'),
         'anon': ('GET',),

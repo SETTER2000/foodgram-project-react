@@ -1,18 +1,27 @@
 from coreapi.utils import File
+from functools import partial
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from rest_framework.decorators import action
+from rest_framework.exceptions import ParseError
 from rest_framework.filters import SearchFilter
+from rest_framework import filters, permissions, viewsets, renderers, status
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
 from rest_framework.response import Response
-from django.shortcuts import render
+from django.core.mail import send_mail
+from django.shortcuts import render, get_object_or_404
+from django.utils.crypto import get_random_string
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
-from rest_framework import viewsets, generics, renderers
+from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser, MultiPartParser
 from backend.app.filters import RecipesFilter
 from .models import Favorite, Ingredient, Recipes, Tag
-from .serializers import (FavoriteSerializer, IngredientSerializer,
+from .permissions import IsAuthorOrReadOnly, PermissonForRole
+from .serializers import (FavoriteSerializer, ShoppingSerializer,
+                          IngredientSerializer,
                           RecipesSerializer, TagSerializer)
 
 User = get_user_model()
@@ -36,8 +45,12 @@ class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
 class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    filter_backends = [SearchFilter]
-    search_fields = ['tags']
+    permission_classes = (
+        partial(PermissonForRole, ROLES_PERMISSIONS.get("Tag")),
+    )
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = "slug"
     paginator = None
 
     # def get_queryset(self):
@@ -59,75 +72,61 @@ class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
 
 class FavoriteModelViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
-    queryset = Favorite.objects.all()
+    queryset = Recipes.objects.all()
+    permission_classes = (
+        (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
+        | partial(PermissonForRole, ROLES_PERMISSIONS.get("Reviews")),
+    )
 
-    # def get_queryset(self):
-    #     user = get_object_or_404(User, email=self.request.user)
-    #     recipe_id = self.kwargs.get("id")
-    #     # rc2.is_favorited.add(us[3])
-    #
-    #     new_queryset = Recipes.objects.filter(pk=recipe_id)
-    #     user.favorite_recipe.add(new_queryset)
-    #     print(f'FSSSSSSSSS:::{new_queryset}')
-    #
-    #     # new_queryset.objects.add(self.request.user)
-    #     # new_queryset.update(is_favorited=1)
-    #     return new_queryset
-    #
-    # # Пишем метод, а в декораторе разрешим работу со списком объектов
-    # # и переопределим URL на более презентабельный
-    #
-    # @action(methods=['delete'], detail=False,
-    #         url_path='/api/recipes/6/favorite/')
-    # def del_white_cats(self, request):
-    #     print(f'DDD1222222DDDDD::::;{request}')
-    #     # Нужны только последние пять котиков белого цвета
-    #     cats = Recipes.objects.filter(color='White')[:5]
-    #     # Передадим queryset cats сериализатору
-    #     # и разрешим работу со списком объектов
-    #     serializer = self.get_serializer(cats, many=True)
-    #     return Response(serializer.data)
+    def get_queryset(self):
+        """Добавит рецепт в избранное."""
+        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        user = User.objects.get(email=self.request.user)
 
+        if user is None:
+            raise ParseError("Неверный запрос!")
+        recipe.is_favorited.add(user)
+        return self.queryset
 
-# def destroy(self, request, *args, **kwargs):
-#         print(f'DDDDZZZZZZZZZZZZZZZZZZZDDDDDDDDD::::;')
-#         try:
-#             instance = self.get_object()
-#             self.perform_destroy(instance)
-#         except Http404:
-#             pass
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-# @action(methods=['delete'], detail=True, url_path='recipes/(?P<phone_pk>[^/.]+)')
-# def delete(self, request):
-#     print(f'DDDDDDDDDDDDDDDDDDDDD::::;{request}')
-#     try:
-#         instance = self.get_object()
-#     except Http404:
-#         pass
-#     return Response(status=status.HTTP_204_NO_CONTENT)
-
-# @action(detail=True,
-#         methods=['delete'],
-#         url_path='recipes/(?P<phone_pk>[^/.]+)')
-# def delete_phone(self, request, phone_pk, pk=None):
-#     print(f'DDDDDDDDDDDDDDDDDDDDD::::;{request}')
-#
-#     contact = self.get_object()
-#     phone = get_object_or_404(contact.phone_qs, pk=phone_pk)
-#     phone.delete()
-#     return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, id=None):
+        """Удалить рецепт из избранного."""
+        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        user = User.objects.get(email=self.request.user)
+        recipe.is_favorited.remove(user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ShoppingCardModelViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoriteSerializer
+    serializer_class = RecipesSerializer
+    queryset = Recipes.objects.all()
+
+    # permission_classes = (
+    #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
+    #     | partial(PermissonForRole, ROLES_PERMISSIONS.get("Shopping")),
+    # )
 
     def get_queryset(self):
-        # Получаем id рецепта из эндпоинта
-        recipe_id = self.kwargs.get("id")
-        # И отбираем только купленные
-        new_queryset = Recipes.objects.filter(pk=recipe_id)
-        return new_queryset
+        """Добавит рецепт в покупки."""
+        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        user = User.objects.get(email=self.request.user)
+
+        if user is None:
+            raise ParseError("Неверный запрос!")
+        recipe.is_in_shopping_cart.add(user)
+        return self.queryset
+
+    @action(
+        detail=True,
+        methods=['delete'],
+        # permission_classes=[IsAuthorOrReadOnly],
+        url_path=r'recipes/<int:id>/shopping_cart',
+        name='Delete Shopping')
+    def delete(self, request, id=None):
+        """Удалить рецепт из покупок."""
+        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        user = User.objects.get(email=self.request.user)
+        recipe.is_in_shopping_cart.remove(user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RecipesModelViewSet(viewsets.ModelViewSet):
@@ -135,6 +134,7 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     serializer_class = RecipesSerializer
     # authentication_classes = (TokenAuthentication,)
     parser_classes = (MultiPartParser, JSONParser)
+    filter_backends = (DjangoFilterBackend, SearchFilter, )
     filterset_class = RecipesFilter
 
     @action(detail=True, methods=['put'])
@@ -185,6 +185,25 @@ def del_favor(request):
     #     except Http404:
     #         pass
     #     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def email_auth(request):
+    """Check email and send to it confirmation code for token auth."""
+    user = get_object_or_404(User, email=request.data["email"])
+    confirmation_code = get_random_string()
+    user.confirmation_code = confirmation_code
+    user.save()
+    send_mail(
+        subject="Код для генерации токена аутентификации YAMDB",
+        message=str(confirmation_code),
+        from_email=DEFAULT_FROM_EMAIL,
+        recipient_list=(request.data["email"],),
+    )
+    return Response(
+        data="Письмо с кодом для аутентификации",
+        status=status.HTTP_201_CREATED,
+    )
 
 
 def index(request):
