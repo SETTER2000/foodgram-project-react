@@ -7,6 +7,9 @@ from rest_framework.exceptions import ParseError
 from rest_framework.filters import SearchFilter
 from rest_framework import filters, permissions, viewsets, renderers, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+from backend.app.pagination import PaginationNull, PaginationAll
+
 from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
 from rest_framework.response import Response
 from django.core.mail import send_mail
@@ -14,7 +17,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.crypto import get_random_string
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
+# from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser, MultiPartParser
 from backend.app.filters import RecipesFilter
@@ -27,47 +30,32 @@ from .serializers import (FavoriteSerializer, ShoppingSerializer,
 User = get_user_model()
 
 
-class StandardResultsSetPagination(PageNumberPagination):
-    # Класс ModelViewSet предоставляет следующие действия: .list ()
-    # .retrieve (), .create (), .update (), .partial_update () и .destroy ()
-    page_size = 100
-    page_size_query_param = 'page_size'
-    max_page_size = 1000
+# class StandardResultsSetPagination(PageNumberPagination):
+#     # Класс ModelViewSet предоставляет следующие действия: .list ()
+#     # .retrieve (), .create (), .update (), .partial_update () и .destroy ()
+#     page_size = 100
+#     page_size_query_param = 'page_size'
+#     max_page_size = 1000
 
 
 class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
+    pagination_class = PaginationNull
     queryset = Ingredient.objects.all().order_by("-id")
     serializer_class = IngredientSerializer
-    paginator = None
 
 
 class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
+    """Теги рецепта."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = PaginationNull
     permission_classes = (
         partial(PermissonForRole, ROLES_PERMISSIONS.get("Tag")),
     )
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
-    paginator = None
-
-    # def get_queryset(self):
-    #     print(f'self.request.query_params::: {self.request.query_params}')
-    #     qs = super().get_queryset()
-    #     slug = self.request.query_params.get('slug')
-    #     return qs.filter(results__tags__iexact=slug)
-    # def list(self, request):
-    #     tags_data = Tag.objects.all()
-    #
-    #     page = self.paginate_queryset(tags_data)
-    #     if page is not None:
-    #         serializer = self.get_serializer(page, many=True)
-    #         return self.get_paginated_response(serializer.data)
-    #
-    #     serializer = self.get_serializer(tags_data, many=True)
-    #     return Response(serializer.data)
 
 
 class FavoriteModelViewSet(viewsets.ModelViewSet):
@@ -99,7 +87,7 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
 class ShoppingCardModelViewSet(viewsets.ModelViewSet):
     serializer_class = RecipesSerializer
     queryset = Recipes.objects.all()
-
+    pagination_class = PaginationAll
     # permission_classes = (
     #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
     #     | partial(PermissonForRole, ROLES_PERMISSIONS.get("Shopping")),
@@ -132,12 +120,12 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
 class RecipesModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesSerializer
+    pagination_class = PaginationAll
+
     # authentication_classes = (TokenAuthentication,)
-    # parser_classes = (MultiPartParser, JSONParser)
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = RecipesFilter
-
-
+    parser_classes = (MultiPartParser, JSONParser)
+    # filter_backends = (DjangoFilterBackend,)
+    # filterset_class = RecipesFilter
 
     @action(detail=True, methods=['put'])
     def tags(self, request, pk=None):
