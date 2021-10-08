@@ -25,7 +25,8 @@ from .models import Favorite, Ingredient, Recipes, Tag
 from .permissions import IsAuthorOrReadOnly, PermissonForRole
 from .serializers import (FavoriteSerializer, ShoppingSerializer,
                           IngredientSerializer,
-                          RecipesSerializer, TagSerializer)
+                          RecipesSerializer, TagSerializer,
+                          RecipesIngredientsSerializer)
 
 User = get_user_model()
 
@@ -119,7 +120,7 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
 
 class RecipesModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
-    serializer_class = RecipesSerializer
+    serializer_class = RecipesIngredientsSerializer
     pagination_class = PaginationAll
 
     # authentication_classes = (TokenAuthentication,)
@@ -154,7 +155,8 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     #     return response
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        print(f'view serializer::: {self.request.data}')
+        serializer.save(author=self.request.user, data=self.request.data)
 
 
 @api_view(['GET'])

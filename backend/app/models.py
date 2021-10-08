@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
 from rest_framework.decorators import action
+from rest_framework.fields import CharField
 
 from foodgram.settings import SUB_DIR_RECIPES
 
@@ -18,7 +20,7 @@ class Ingredient(models.Model):
 
     measurement_unit = models.CharField(max_length=150)
 
-    def __str__(self) -> str:
+    def __str__(self) -> CharField:
         return self.name
 
     class Meta:
@@ -40,7 +42,7 @@ class Tag(models.Model):
     color = models.CharField('Цветовой HEX-код', unique=True, max_length=7)
     slug = models.SlugField('URL', unique=True)
 
-    def __str__(self) -> str:
+    def __str__(self) -> TextField:
         return self.name
 
     class Meta:
@@ -71,17 +73,6 @@ class Recipes(models.Model):
             MaxValueValidator(10000),
             MinValueValidator(1)])
 
-    # class Rating(models.IntegerChoices):
-    #     LOW = 1, _('low')
-    #     MIDDLE = 2, _('midle')
-    #     HIGH = 3, _('high')
-    #     __empty__ = _('no rating')
-    #
-    # rating = models.PositiveSmallIntegerField(
-    #     _('rating'),
-    #     choices=Rating.choices,
-    #     blank=True, null=True)
-
     is_favorited = models.ManyToManyField(
         'users.User',
         blank=True,
@@ -105,15 +96,17 @@ class Recipes(models.Model):
         related_name='recipes')
 
     ingredients = models.ManyToManyField(
-        'Ingredient', blank=True,
-        related_name='recipes')
-    # through='IngredientRecipes')
+        'Ingredient',
+        through='RecipesIngredients'
+        # blank=True,
+        # related_name='recipes')
+    )
 
     tags = models.ManyToManyField(
         'Tag', blank=True,
         related_name='recipes')
 
-    def __str__(self) -> str:
+    def __str__(self) -> CharField:
         return self.name
 
     class Meta:
@@ -122,25 +115,41 @@ class Recipes(models.Model):
         verbose_name_plural = 'Рецепты'
 
 
-class TagRecipes(models.Model):
-    """ В этой модели будут связаны id рецепта и id его тега."""
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.tag} {self.recipe}'
-
-
-class IngredientRecipes(models.Model):
+class RecipesIngredients(models.Model):
     """ В этой модели будут связаны id рецепта и id его ингредиента."""
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+    amount = models.IntegerField(_('Количество'), default=1)
+
+
+#
+# class IngredientInRecipe(models.Model):
+#     """ В этой модели будут связаны id рецепта и id его ингредиента."""
+#     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+#     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return f'{self.ingredient} {self.recipe}'
+
+
+class RecipesTags(models.Model):
+    """ В этой модели будут связаны id рецепта и id его тега."""
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    recipes = models.ForeignKey(Recipes, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.ingredient} {self.recipe}'
+        return f'{self.tag} {self.recipes}'
 
 
-
+#
+# class TagRecipes(models.Model):
+#     """ В этой модели будут связаны id рецепта и id его тега."""
+#     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+#     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return f'{self.tag} {self.recipe}'
+#
 
 class Favorite(models.Model):
     """Избранные рецепты."""
