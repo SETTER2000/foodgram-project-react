@@ -42,16 +42,19 @@ class UserSerializer(serializers.ModelSerializer):
 class SubscriptionsSerializer(serializers.ModelSerializer):
     """Мои подписки."""
 
+    user = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='email'
+    )
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='email'
+    )
+
     class Meta:
+        fields = ('user', 'author')
         model = Subscriptions
-        fields = (
-            'id',
-            'first_name',
-            'last_name',
-            'username',
-            'password',
-            'email',
-        )
+
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

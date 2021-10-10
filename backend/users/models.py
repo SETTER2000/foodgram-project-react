@@ -15,18 +15,20 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
-    subscriptions = models.ManyToManyField(
+    is_subscribed = models.ManyToManyField(
         'self',
         blank=True,
-        symmetrical=False)
-
-    is_subscribed = models.BooleanField(default=False)
+        symmetrical=False,
+        related_name='subscriptions',
+        help_text='На кого подисан я.'
+    )
 
     email = models.EmailField(_('email address'), max_length=254, unique=True)
-    username = models.CharField(max_length=150, validators=[validate_name])
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    password = models.CharField(max_length=150)
+    username = models.CharField(_('username'), max_length=150, validators=[
+        validate_name])
+    first_name = models.CharField(_('first name'), max_length=150)
+    last_name = models.CharField(_('last name'),max_length=150)
+    password = models.CharField(_('password'),max_length=150)
     role = models.CharField(
         _('role'), choices=Roles.choices, default=Roles.USER, max_length=30
     )
@@ -45,15 +47,15 @@ class User(AbstractUser):
         return self.role == 'user'
 
     class Meta:
-        verbose_name='user'
-        verbose_name_plural='users'
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.email
 
 
 class Subscriptions(models.Model):
-    """Мои подписки."""
+    """Кто подписался на меня."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -68,11 +70,45 @@ class Subscriptions(models.Model):
         related_name='following')
 
     def __str__(self):
-        return [f'user: {self.user}, '
-                f'author: {self.author}']
+        return f'{self.author}'
 
     class Meta:
-        db_table = 'follow_author'
-        verbose_name = 'follow'
-        ordering = ('-author',)
+        verbose_name = 'Подптсчик'
         verbose_name_plural = 'Подписки'
+
+#
+# class Subscriptions(models.Model):
+#     """Подписчики."""
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='author')
+#     subscriber = models.ForeignKey(
+#         User, on_delete=models.CASCADE,
+#         related_name='subscriber')
+#
+#     def __str__(self):
+#         return f'{self.subscriber} подписан на {self.user}'
+#
+#
+# class Subscriptions(models.Model):
+#     following = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         verbose_name='автор',
+#         help_text='Пользователь, на которого подписываются.',
+#         related_name='follow')
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         verbose_name='подписчик',
+#         help_text='Кто подписался (Подписчик)',
+#         related_name='follower')
+#
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(
+#                 fields=['user', 'following'],
+#                 name='unique user_following',
+#             )
+#         ]
