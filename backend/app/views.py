@@ -155,7 +155,6 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     #     return response
 
     def perform_create(self, serializer):
-        print(f'view serializer::: {self.request.data}')
         serializer.save(author=self.request.user, data=self.request.data)
 
 

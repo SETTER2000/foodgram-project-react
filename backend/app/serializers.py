@@ -8,6 +8,7 @@ from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 
 from .models import (Favorite, Ingredient, Recipes,
                      Tag, User, RecipesIngredients)
+from ..users.serializers import UserSerializer
 
 
 class Base64ImageFieldToFile(serializers.Field):
@@ -77,6 +78,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipesIngredientsSerializer(serializers.ModelSerializer):
+    """Связующая модель имеющая дополнительное поле (боль всего проекта)."""
     class Meta:
         model = RecipesIngredients
         fields = ('amount',)
@@ -84,17 +86,21 @@ class RecipesIngredientsSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients_data = validated_data['data'].pop('ingredients')
         tags_data = validated_data['data'].pop('tags')
-        # return ingredients_data
-        print(f'FFFF-6666:::::::: {ingredients_data}')
         recipe = Recipes.objects.create(**validated_data['data'])
-        print(f'FFFFF-555:::::::: {recipe}')
+        recipe.author = validated_data['author']
+        recipe.save()
         for tag_data in tags_data:
             tg = Tag.objects.get(id=tag_data)
             tg.recipes.add(recipe)
             tg.save()
-        # починить!!!
+
         for ingredient_data in ingredients_data:
-            RecipesIngredients.objects.create(recipe=recipe, **ingredient_data)
+            ingredient = Ingredient.objects.get(id=ingredient_data["id"])
+            recipe.ingredients.add(ingredient)
+            recipe.save()
+            ri = RecipesIngredients.objects.last()
+            ri.amount = ingredient_data["amount"]
+            ri.save()
 
         return recipe
 
@@ -106,7 +112,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipesSerializer(serializers.ModelSerializer):
-    # tags = TagSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+
     # ingredients = RecipesIngredientsSerializer(
     #     source='ingredient_for_recipes',
     #     many=True)
@@ -169,6 +176,8 @@ class RecipesSerializer(serializers.ModelSerializer):
     #     return recipe
 
     # def perform_create(self, serializer):
+    #     serializer.save(author=self.request.user)
+
     #     print(f'serializer::: {serializer}')
     #     # rc2.is_favorited.add(us[3])
     #     """Чтобы передать новое значение для какого-то поля в метод save(),

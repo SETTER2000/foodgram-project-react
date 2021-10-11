@@ -35,3 +35,11 @@ class RecipesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'image', 'text', 'author', 'cooking_time',)
     list_display_list = ('name',)
     empty_value_display = EVD
+
+
+@admin.register(models.RecipesIngredients)
+class RecipesIngredientsAdmin(admin.ModelAdmin):
+    search_fields = ('id', 'ingredient', 'recipe', 'amount')
+    list_display = ('id', 'ingredient', 'recipe', 'amount')
+    list_display_list = ('id',)
+    empty_value_display = EVD
