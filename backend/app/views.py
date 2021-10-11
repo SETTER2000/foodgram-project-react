@@ -140,20 +140,6 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=400)
 
-    # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    # def highlight(self, request, *args, **kwargs):
-    #     recipes = self.get_object()
-    #     return Response(recipes.highlighted)
-    #
-    # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    # def download_pdf(request):
-    #     path_to_file = MEDIA_ROOT + '/filename.pdf'
-    #     f = open(path_to_file, 'rb')
-    #     pdf_file = File(f)
-    #     response = HttpResponse(pdf_file.read())
-    #     response['Content-Disposition'] = 'attachment;'
-    #     return response
-
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, data=self.request.data)
 
@@ -166,16 +152,6 @@ def download_pdf(request):
     response = HttpResponse(pdf_file.read())
     response['Content-Disposition'] = 'attachment;'
     return response
-
-
-@api_view(['DELETE'])
-def del_favor(request):
-    print(f'DDDDDDDDDDDDDDDDDDDDD::::;{request}')
-    #     try:
-    #         instance = self.get_object()
-    #     except Http404:
-    #         pass
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["POST"])

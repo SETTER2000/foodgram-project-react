@@ -8,7 +8,6 @@ from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 
 from .models import (Favorite, Ingredient, Recipes,
                      Tag, User, RecipesIngredients)
-from ..users.serializers import UserSerializer
 
 
 class Base64ImageFieldToFile(serializers.Field):
@@ -55,13 +54,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
         model = Favorite
 
-    # def perform_create(self, serializer):
-    #     # rc2.is_favorited.add(us[3])
-    #     """Чтобы передать новое значение для какого-то поля в метод save(),
-    #     нужно переопределить метод perform_create().В метод save() в полe
-    #     author передадим объект пользователя, отправившего запрос."""
-    #     serializer.save(is_favorited=self.request.user)
-
 
 class AuthorSerializer(serializers.ModelSerializer):
     """Вложенная модель пользователя, для контроля полей в выдаче."""
@@ -79,10 +71,15 @@ class TagSerializer(serializers.ModelSerializer):
 
 class RecipesIngredientsSerializer(serializers.ModelSerializer):
     """Связующая модель имеющая дополнительное поле (боль всего проекта)."""
+
     class Meta:
         model = RecipesIngredients
         fields = ('amount',)
 
+    # Перенести часть реализации create в класс RecipesSerializer
+    # здесь оставить всё что касается create amount
+    # сейчас весь рецепт создаётся в этом сериалайзере из-за этого выпадает
+    # обработка кртинок
     def create(self, validated_data):
         ingredients_data = validated_data['data'].pop('ingredients')
         tags_data = validated_data['data'].pop('tags')
@@ -118,7 +115,7 @@ class RecipesSerializer(serializers.ModelSerializer):
     #     source='ingredient_for_recipes',
     #     many=True)
     # tags = serializers.StringRelatedField(many=True, read_only=True)
-    ingredients = RecipesIngredientsSerializer(many=True)
+    # ingredients = RecipesIngredientsSerializer()
     # ingredients = RecipesIngredientsSerializer()
     # ingredients = serializers.SerializerMethodField()
     # author = serializers.StringRelatedField(read_only=True)
@@ -161,61 +158,5 @@ class RecipesSerializer(serializers.ModelSerializer):
         representation["author"] = AuthorSerializer(instance.author).data
         return representation
 
-    # def create(self, validated_data):
-    #     print(f'validated_data::: {list(validated_data.values())}')
-    #     ingredients_data = validated_data.data.pop('ingredients')
-    #     recipe = Recipes.objects.create(**validated_data)
-    #     for ingredient_data in ingredients_data:
-    #         Ingredient.objects.create(recipe=recipe, **ingredient_data)
-    #     return recipe
-    # def create(self, validated_data):
-    #     print(f'validated_data::::: ')
-    #     ingredients_data = validated_data.pop('ingredients')
-    #     recipe = Recipes.objects.create(**validated_data)
-    #     Ingredient.objects.create(recipe=recipe, **ingredients_data)
-    #     return recipe
-
-    # def perform_create(self, serializer):
-    #     serializer.save(author=self.request.user)
-
-    #     print(f'serializer::: {serializer}')
-    #     # rc2.is_favorited.add(us[3])
-    #     """Чтобы передать новое значение для какого-то поля в метод save(),
-    #     нужно переопределить метод perform_create().В метод save() в полe
-    #     author передадим объект пользователя, отправившего запрос."""
-    #     serializer.save(author=self.request.user)
-
     def perform_update(self, serializer):
         serializer.save(author=self.request.user)
-
-    #  def create(self, validated_data):
-    #     tracks_data = validated_data.pop('tags')
-    #     recipe = Recipes.objects.create(**validated_data)
-    #     for track_data in tracks_data:
-    #         Tag.objects.create(recipe=recipe, **track_data)
-    #     return recipe
-
-    # def create(self, validated_data):
-    #     # Если в исходном запросе не было поля ingredients
-    #     if 'ingredients' not in self.initial_data:
-    #         # То создаём запись о котике без его достижений
-    #         recipe = Recipes.objects.create(**validated_data)
-    #         return recipe
-    #
-    #     # Иначе делаем следующее:
-    #     # Уберем список ингредиентов из словаря validated_data и сохраним его
-    #     ingredients = validated_data.pop('ingredients')
-    #
-    #     # Создадим новый рецепт пока без ингредиентов, данных нам достаточно
-    #     recipe = Recipes.objects.create(**validated_data)
-    #
-    #     # Для каждого ингредиента из списка ингредиентов
-    #     for ingredient in ingredients:
-    #         # Создадим новую запись или получим существующий экземпляр из БД
-    #         current_ingredient, status = Ingredient.objects.get_or_create(
-    #             **ingredient)
-    #         # Поместим ссылку на каждый ингредиент во вспомогательную таблицу
-    #         # Не забыв указать к какому рецепту он относится
-    #         IngredientRecipes.objects.create(
-    #             ingredient=current_ingredient, recipe=recipe)
-    #     return recipe
