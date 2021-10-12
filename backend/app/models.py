@@ -121,6 +121,8 @@ class RecipesIngredients(models.Model):
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
     amount = models.IntegerField(_('Количество'), default=1)
 
+    class Meta:
+        unique_together = ('ingredient', 'recipe')
 
 #
 # class IngredientInRecipe(models.Model):

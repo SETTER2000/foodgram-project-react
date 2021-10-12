@@ -26,7 +26,7 @@ from .permissions import IsAuthorOrReadOnly, PermissonForRole
 from .serializers import (FavoriteSerializer, ShoppingSerializer,
                           IngredientSerializer,
                           RecipesSerializer, TagSerializer,
-                          RecipesIngredientsSerializer)
+                          RecipesIngredientsSerializer, RecipesListSerializer)
 
 User = get_user_model()
 
@@ -120,8 +120,8 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
 
 class RecipesModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
-    serializer_class = RecipesIngredientsSerializer
-    pagination_class = PaginationAll
+    serializer_class = RecipesSerializer
+    # pagination_class = PaginationAll
 
     # authentication_classes = (TokenAuthentication,)
     parser_classes = (MultiPartParser, JSONParser)
@@ -143,6 +143,12 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, data=self.request.data)
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            # ...то применяем CatListSerializer
+            return RecipesListSerializer
+        # А если запрошенное действие — не 'list', применяем CatSerializer
+        return RecipesSerializer
 
 @api_view(['GET'])
 def download_pdf(request):
