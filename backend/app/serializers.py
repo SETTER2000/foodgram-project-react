@@ -146,28 +146,11 @@ class RecipesSerializer(serializers.ModelSerializer):
         representation["author"] = AuthorSerializer(instance.author).data
         return representation
 
-    def image_convert(self, img: base64):
-        """Конвертирует картинку из base64 в строку."""
-        os.makedirs(f'{MEDIA_ROOT}/{SUB_DIR_RECIPES}', exist_ok=True)
-        try:
-            format, imgstr = img.split(';base64,')
-            ext = format.split('/')[-1]
-            img_data = base64.b64decode(imgstr)
-            filename = f'{SUB_DIR_RECIPES}/{int(time.time())}.{ext}'
-            full_file_path = f'{MEDIA_ROOT}/{filename}'
-            f = open(full_file_path, 'wb')
-            f.write(img_data)
-            f.close()
-        except ValueError:
-            raise serializers.ValidationError('С картинкой проблемы.')
-        return filename
-
     def create(self, validated_data):
-        print(f'validated_data::: {validated_data["data"]["image"]}')
         img = validated_data["data"]["image"]
         ingredients_data = validated_data['data'].pop('ingredients')
         tags_data = validated_data['data'].pop('tags')
-        validated_data["data"]["image"] = self.image_convert(img)
+        validated_data["data"]["image"] = image_convert(img)
 
         recipe = Recipes.objects.create(**validated_data['data'])
         recipe.author = validated_data['author']
@@ -184,6 +167,50 @@ class RecipesSerializer(serializers.ModelSerializer):
             ri.amount = ingredient_data["amount"]
             ri.save()
         return recipe
+
+    def create_or_update_packages(self, packages):
+        package_ids = []
+        for package in packages:
+            package_instance, created = Ingredient.objects.update_or_create(
+                pk=package.get('id'), defaults=package)
+            package_ids.append(package_instance.pk)
+        return package_ids
+
+    def update(self, instance, validated_data):
+        print(f'instance:::: {instance}')
+        print(f'validated_data:::: {validated_data}')
+        ingredients = validated_data.pop('ingredients', [])
+        instance.ingredients.set(self.create_or_update_packages(ingredients))
+        fields = ['name', 'image', 'cooking_time', 'text']
+        for field in fields:
+            try:
+                setattr(instance, field, validated_data[field])
+            except KeyError:  # validated_data may not contain all fields during HTTP PATCH
+                pass
+        instance.save()
+        return instance
+        # tags_data = validated_data['data'].pop('tags')
+        # instance = super(RecipesSerializer, self).update(instance,
+        #                                                  validated_data['data'])
+        # for tag_data in tags_data:
+        #     tag_qs = Tag.objects.filter(name__iexact=tag_data['name'])
+        #
+        #     if tag_qs.exists():
+        #         tag = tag_qs.first()
+        #     else:
+        #         tag = Tag.objects.create(**tag_data)
+        #
+        #     instance.tag.add(tag)
+        # instance.name = validated_data.get('name', instance.name)
+        # instance.image = validated_data.get('image', instance.image)
+        # instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
+        # instance.text = validated_data.get('text', instance.text)
+        # instance.ingredients = validated_data.get('ingredients', instance.ingredients)
+        # #
+        # instance.save()
+        # return instance
+
+        # Recipes.objects.filter(pk=instance.pk).update(**validated_data)
         # ingredients = serializers.SerializerMethodField()
     # groups = serializers.SerializerMethodField()
     # ingredients = RecipesIngredientsSerializer(
@@ -220,7 +247,6 @@ class RecipesListSerializer(serializers.ModelSerializer):
         read_only_fields = ('author',)
 
     def get_ingredients(self, obj):
-        "obj is a Member instance. Returns list of dicts"""
         recipes = RecipesIngredients.objects.filter(ingredient=obj)
         return [
             RecipesIngredientsSerializer(recipe).data for recipe in recipes]
@@ -237,3 +263,20 @@ class RecipesListSerializer(serializers.ModelSerializer):
 
     def perform_update(self, serializer):
         serializer.save(author=self.request.user)
+
+
+def image_convert(img: base64):
+    """Конвертирует картинку из base64 в строку."""
+    os.makedirs(f'{MEDIA_ROOT}/{SUB_DIR_RECIPES}', exist_ok=True)
+    try:
+        format, imgstr = img.split(';base64,')
+        ext = format.split('/')[-1]
+        img_data = base64.b64decode(imgstr)
+        filename = f'{SUB_DIR_RECIPES}/{int(time.time())}.{ext}'
+        full_file_path = f'{MEDIA_ROOT}/{filename}'
+        f = open(full_file_path, 'wb')
+        f.write(img_data)
+        f.close()
+    except ValueError:
+        raise serializers.ValidationError('С картинкой проблемы.')
+    return filename
