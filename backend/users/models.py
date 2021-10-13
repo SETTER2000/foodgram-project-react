@@ -27,8 +27,8 @@ class User(AbstractUser):
     username = models.CharField(_('username'), max_length=150, validators=[
         validate_name])
     first_name = models.CharField(_('first name'), max_length=150)
-    last_name = models.CharField(_('last name'),max_length=150)
-    password = models.CharField(_('password'),max_length=150)
+    last_name = models.CharField(_('last name'), max_length=150)
+    password = models.CharField(_('password'), max_length=150)
     role = models.CharField(
         _('role'), choices=Roles.choices, default=Roles.USER, max_length=30
     )
