@@ -122,7 +122,7 @@ class RecipesIngredients(models.Model):
     amount = models.IntegerField(_('Количество'), default=1)
 
     class Meta:
-        unique_together = ('ingredient', 'recipe')
+        unique_together = ('ingredient', 'recipe','amount')
 
 #
 # class IngredientInRecipe(models.Model):

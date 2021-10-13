@@ -89,6 +89,7 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
     serializer_class = RecipesSerializer
     queryset = Recipes.objects.all()
     pagination_class = PaginationAll
+
     # permission_classes = (
     #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
     #     | partial(PermissonForRole, ROLES_PERMISSIONS.get("Shopping")),
@@ -121,34 +122,41 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
 class RecipesModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesSerializer
-    # pagination_class = PaginationAll
-
-    # authentication_classes = (TokenAuthentication,)
+    pagination_class = PaginationAll
+    permission_classes = [IsAuthorOrReadOnly,
+                          permissions.IsAuthenticatedOrReadOnly]
     parser_classes = (MultiPartParser, JSONParser)
-    # filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
+
     # filterset_class = RecipesFilter
 
-    @action(detail=True, methods=['put'])
-    def tags(self, request, pk=None):
-        user = self.get_object()
-        tags = user.tags
-        print(f'tags:::::::::::::{tags}')
-        serializer = TagSerializer(tags, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=200)
-        else:
-            return Response(serializer.errors, status=400)
+    # @action(detail=True, methods=['put'])
+    # def tags(self, request, pk=None):
+    #     user = self.get_object()
+    #     tags = user.tags
+    #     print(f'tags:::::::::::::{tags}')
+    #     serializer = TagSerializer(tags, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=200)
+    #     else:
+    #         return Response(serializer.errors, status=400)
 
     def perform_create(self, serializer):
+        user = User.objects.filter(email=self.request.user)
+        if not user.exists():
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
         serializer.save(author=self.request.user, data=self.request.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_serializer_class(self):
         if self.action == 'list':
             # ...то применяем CatListSerializer
             return RecipesListSerializer
-        # А если запрошенное действие — не 'list', применяем CatSerializer
         return RecipesSerializer
+
 
 @api_view(['GET'])
 def download_pdf(request):

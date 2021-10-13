@@ -80,27 +80,6 @@ class RecipesIngredientsSerializer(serializers.ModelSerializer):
         model = RecipesIngredients
         fields = ('id', 'name', 'measurement_unit', 'amount',)
 
-    # def create(self, validated_data):
-    #     ingredients_data = validated_data['data'].pop('ingredients')
-    #     tags_data = validated_data['data'].pop('tags')
-    #     recipe = Recipes.objects.create(**validated_data['data'])
-    #     recipe.author = validated_data['author']
-    #     recipe.save()
-    #     for tag_data in tags_data:
-    #         tg = Tag.objects.get(id=tag_data)
-    #         tg.recipes.add(recipe)
-    #         tg.save()
-    #
-    #     for ingredient_data in ingredients_data:
-    #         ingredient = Ingredient.objects.get(id=ingredient_data["id"])
-    #         recipe.ingredients.add(ingredient)
-    #         recipe.save()
-    #         ri = RecipesIngredients.objects.last()
-    #         ri.amount = ingredient_data["amount"]
-    #         ri.save()
-    #
-    #     return recipe
-
 
 class IngredientSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(required=False)
@@ -168,63 +147,40 @@ class RecipesSerializer(serializers.ModelSerializer):
             ri.save()
         return recipe
 
-    def create_or_update_packages(self, packages):
-        package_ids = []
-        for package in packages:
-            package_instance, created = Ingredient.objects.update_or_create(
-                pk=package.get('id'), defaults=package)
-            package_ids.append(package_instance.pk)
-        return package_ids
-
     def update(self, instance, validated_data):
-        print(f'instance:::: {instance}')
-        print(f'validated_data:::: {validated_data}')
-        ingredients = validated_data.pop('ingredients', [])
-        instance.ingredients.set(self.create_or_update_packages(ingredients))
-        fields = ['name', 'image', 'cooking_time', 'text']
-        for field in fields:
-            try:
-                setattr(instance, field, validated_data[field])
-            except KeyError:  # validated_data may not contain all fields during HTTP PATCH
-                pass
+        RecipesIngredients.objects.filter(recipe=instance).delete()
+        ingredients = self.initial_data.get("ingredients")
+        tags_data = self.initial_data.get("tags")
+        tags_data = Tag.objects.filter(id__in=tags_data)
+        instance.tags.clear()
+        for tag in tags_data:
+            tag.recipes.add(instance)
+            tag.save()
+        for ingredient in ingredients:
+            id = ingredient.get("id")
+            amount = ingredient.get("amount")
+            new_ingredient = Ingredient.objects.get(pk=id)
+            RecipesIngredients(recipe=instance, ingredient=new_ingredient,
+                               amount=amount).save()
+        instance.__dict__.update(**validated_data)
         instance.save()
         return instance
-        # tags_data = validated_data['data'].pop('tags')
-        # instance = super(RecipesSerializer, self).update(instance,
-        #                                                  validated_data['data'])
-        # for tag_data in tags_data:
-        #     tag_qs = Tag.objects.filter(name__iexact=tag_data['name'])
-        #
-        #     if tag_qs.exists():
-        #         tag = tag_qs.first()
-        #     else:
-        #         tag = Tag.objects.create(**tag_data)
-        #
-        #     instance.tag.add(tag)
-        # instance.name = validated_data.get('name', instance.name)
-        # instance.image = validated_data.get('image', instance.image)
-        # instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
-        # instance.text = validated_data.get('text', instance.text)
-        # instance.ingredients = validated_data.get('ingredients', instance.ingredients)
-        # #
-        # instance.save()
-        # return instance
 
-        # Recipes.objects.filter(pk=instance.pk).update(**validated_data)
-        # ingredients = serializers.SerializerMethodField()
-    # groups = serializers.SerializerMethodField()
-    # ingredients = RecipesIngredientsSerializer(
-    #     source='ingredient_for_recipes',
-    #     many=True)
-    # tags = serializers.StringRelatedField(many=True, read_only=True)
-    # ingredients = RecipesIngredientsSerializer()
-    # ingredients = RecipesIngredientsSerializer()
-    # ingredients = serializers.SerializerMethodField()
-    # author = serializers.StringRelatedField(read_only=True)
+
+class RecipesMinSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipes
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time')
+        read_only_fields = ('author',)
 
 
 class RecipesListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
+
     ingredients = RecipesIngredientsSerializer(
         source='recipesingredients_set', many=True)
     image = Base64ImageFieldToFile()
@@ -261,8 +217,11 @@ class RecipesListSerializer(serializers.ModelSerializer):
         email = self.context["request"].user
         return len(obj.is_in_shopping_cart.filter(email=email))
 
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
+    def to_representation(self, instance):
+        """Добавляет автора рецепта при создании."""
+        representation = super().to_representation(instance)
+        representation["author"] = AuthorSerializer(instance.author).data
+        return representation
 
 
 def image_convert(img: base64):
