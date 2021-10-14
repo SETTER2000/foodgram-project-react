@@ -55,8 +55,7 @@ class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
         partial(PermissonForRole, ROLES_PERMISSIONS.get("Tag")),
     )
     filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
-    lookup_field = "slug"
+    search_fields = ("slug",)
 
 
 class FavoriteModelViewSet(viewsets.ModelViewSet):
@@ -69,8 +68,9 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Добавит рецепт в избранное."""
+        user = get_object_or_404(User, email=self.request.user)
         recipe = Recipes.objects.get(pk=self.kwargs["id"])
-        user = User.objects.get(email=self.request.user)
+        # user = User.objects.get(email=self.request.user)
 
         if user is None:
             raise ParseError("Неверный запрос!")
@@ -79,9 +79,11 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
 
     def delete(self, request, id=None):
         """Удалить рецепт из избранного."""
+        user = get_object_or_404(User, email=self.request.user)
         recipe = Recipes.objects.get(pk=self.kwargs["id"])
-        user = User.objects.get(email=self.request.user)
+        # user = User.objects.get(email=self.request.user)
         recipe.is_favorited.remove(user)
+        recipe.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
