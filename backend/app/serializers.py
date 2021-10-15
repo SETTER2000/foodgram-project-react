@@ -25,8 +25,7 @@ class Base64ImageFieldToFile(serializers.Field):
         return f'/media/{value}'
 
     def to_internal_value(self, data):
-        """Для записи."""
-
+        """ Для записи. """
         os.makedirs(f'{MEDIA_ROOT}/{SUB_DIR_RECIPES}', exist_ok=True)
 
         try:

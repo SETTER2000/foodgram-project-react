@@ -1,4 +1,13 @@
 from coreapi.utils import File
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+from reportlab.lib import colors
+from reportlab.lib.colors import HexColor
 from functools import partial
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
@@ -7,10 +16,11 @@ from rest_framework.exceptions import ParseError
 from rest_framework.filters import SearchFilter
 from rest_framework import filters, permissions, viewsets, renderers, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.utils import json
 
 from backend.app.pagination import PaginationNull, PaginationAll
 
-from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS
+from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS, ROOT_URLCONF
 from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
@@ -27,6 +37,7 @@ from .serializers import (FavoriteSerializer, ShoppingSerializer,
                           IngredientSerializer,
                           RecipesSerializer, TagSerializer,
                           RecipesIngredientsSerializer, RecipesListSerializer)
+from ..users.serializers import UserSerializer
 
 User = get_user_model()
 
@@ -160,14 +171,66 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
         return RecipesSerializer
 
 
+# def absolutePosition(self, x, y):
+#     return x, y
+
+
 @api_view(['GET'])
 def download_pdf(request):
-    path_to_file = MEDIA_ROOT + '/filename.pdf'
-    f = open(path_to_file, 'rb')
-    pdf_file = File(f)
-    response = HttpResponse(pdf_file.read())
-    response['Content-Disposition'] = 'attachment;'
-    return response
+    pdfmetrics.registerFont(TTFont('abc', 'static/Oswaldlight.ttf'))
+    # Создайте файловый буфер для приема данных PDF.
+    buffer = io.BytesIO()
+
+    # Создайте объект PDF, используя буфер в качестве «файла».
+    c = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
+
+    c.setFillColor(HexColor('#08073b'))
+    c.setFont('Courier-Bold', 36)
+    c.drawCentredString(300, 100, 'Recipes Shopping')
+
+    c.setFont('Helvetica-Bold', 18)
+    c.drawCentredString(300, 750, '© Foodgram')
+
+    text_obj = c.beginText()
+    text_obj.setTextOrigin(inch + 55, inch + 90)
+    text_obj.setFont('abc', 18)
+    text_obj.setFillColor(HexColor('#79797e'))
+
+    serializer = UserSerializer(request.user)
+
+    # for font in c.getAvailableFonts():
+    #     print(font)
+
+    recipes = Recipes.objects.filter(is_in_shopping_cart__id=serializer.data['id'])
+    lines = []
+    for recipe in recipes:
+        lines.append(f'#{recipe.id}:  {recipe.name} | время приготовления {recipe.cooking_time}')
+        lines.append(' ')
+
+    for line in lines:
+        text_obj.textLine(line)
+
+    # # перемещаем начало координат вверх и влево
+    # c.translate(inch, 750)
+    c.drawText(text_obj)
+
+    # выберите цвета
+    c.setStrokeColorRGB(0.2, 0.5, 0.3)
+    c.setFillColorRGB(1, 0, 1)
+    # рисуем прямоугольник
+    # c.rect(inch, inch, 6 * inch, 9 * inch, fill=1)
+    # заставить текст идти прямо вверх
+    # c.rotate(90)
+    # change color
+    c.setFillColorRGB(0, 0, 0.77)
+    # Закройте объект PDF аккуратно, и все готово.
+    c.showPage()
+    c.save()
+
+    # FileResponse устанавливает заголовок Content-Disposition, чтобы браузеры
+    # представить возможность сохранения файла.
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='recipes_shopping.pdf')
 
 
 @api_view(["POST"])
