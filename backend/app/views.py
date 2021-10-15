@@ -177,6 +177,8 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def download_pdf(request):
+    get_object_or_404(User, email=request.user)
+    serializer = UserSerializer(request.user)
     pdfmetrics.registerFont(TTFont('abc', 'static/Oswaldlight.ttf'))
     # Создайте файловый буфер для приема данных PDF.
     buffer = io.BytesIO()
@@ -196,7 +198,7 @@ def download_pdf(request):
     text_obj.setFont('abc', 18)
     text_obj.setFillColor(HexColor('#79797e'))
 
-    serializer = UserSerializer(request.user)
+
 
     # for font in c.getAvailableFonts():
     #     print(font)
