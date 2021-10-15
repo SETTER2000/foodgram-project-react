@@ -1,6 +1,6 @@
 from coreapi.utils import File
 import io
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
@@ -110,7 +110,11 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Добавит рецепт в покупки."""
-        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        try:
+            recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        except Recipes.DoesNotExist:
+            raise Http404(f'Нет такого рецепта {self.kwargs["id"]}.')
+
         user = User.objects.get(email=self.request.user)
 
         if user is None:
@@ -197,8 +201,6 @@ def download_pdf(request):
     text_obj.setTextOrigin(inch + 55, inch + 90)
     text_obj.setFont('abc', 18)
     text_obj.setFillColor(HexColor('#79797e'))
-
-
 
     # for font in c.getAvailableFonts():
     #     print(font)
