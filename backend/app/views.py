@@ -190,7 +190,7 @@ def download_pdf(request):
 
     c.setFont('Helvetica-Bold', 18)
     c.drawCentredString(300, 750, '© Foodgram')
-
+    c.line(30, 710, 580, 710)
     text_obj = c.beginText()
     text_obj.setTextOrigin(inch + 55, inch + 90)
     text_obj.setFont('abc', 18)
