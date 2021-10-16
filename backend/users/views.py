@@ -66,7 +66,7 @@ class UserModelViewSet(CreateListModelMixinViewSet):
         if request.method == 'GET':
             serializer = self.get_serializer(request.user)
             data = serializer.data
-            del data['password']
+            # del data['password']
             return Response(data)
 
         serializer = self.get_serializer(

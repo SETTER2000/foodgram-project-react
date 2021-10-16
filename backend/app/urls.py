@@ -3,30 +3,6 @@ from rest_framework import routers
 from . import views as vs
 
 app_name = 'backend.app'
-
-# recipes_list = vs.RecipesModelViewSet.as_view({
-#     'get': 'list',
-#     'post': 'create'
-# })
-# recipes_detail = vs.RecipesModelViewSet.as_view({
-#     'get': 'retrieve',
-#     'put': 'update',
-#     'patch': 'partial_update',
-#     'delete': 'destroy'
-# })
-# recipes_highlight = vs.RecipesModelViewSet.as_view({
-#     'get': 'highlight'
-# }, renderer_classes=[renderers.StaticHTMLRenderer])
-# recipes_highlight = vs.RecipesModelViewSet.as_view({
-#     'get': 'highlight'
-# }, renderer_classes=[renderers.StaticHTMLRenderer])
-# user_list = UserViewSet.as_view({
-#     'get': 'list'
-# })
-# user_detail = UserViewSet.as_view({
-#     'get': 'retrieve'
-# })
-
 router_v1 = routers.DefaultRouter()
 
 router_v1.register(r'ingredients', vs.IngredientModelViewSet,

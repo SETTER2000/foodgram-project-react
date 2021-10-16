@@ -1,4 +1,3 @@
-from coreapi.utils import File
 import io
 from django.http import FileResponse, Http404
 from reportlab.pdfgen import canvas
@@ -6,56 +5,39 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
-from reportlab.lib import colors
 from reportlab.lib.colors import HexColor
 from functools import partial
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
-from rest_framework.filters import SearchFilter
-from rest_framework import filters, permissions, viewsets, renderers, status
+from rest_framework import filters, permissions, viewsets, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.utils import json
-
 from backend.app.pagination import PaginationNull, PaginationAll
-
-from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS, ROOT_URLCONF
+from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS, FONT_PDF
 from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 from django.utils.crypto import get_random_string
-from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
-from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
-# from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser, MultiPartParser
-from backend.app.filters import RecipesFilter
-from .models import Favorite, Ingredient, Recipes, Tag
+from .models import Ingredient, Recipes, Tag
 from .permissions import IsAuthorOrReadOnly, PermissonForRole
-from .serializers import (FavoriteSerializer, ShoppingSerializer,
+from .serializers import (FavoriteSerializer,
                           IngredientSerializer,
-                          RecipesSerializer, TagSerializer,
-                          RecipesIngredientsSerializer, RecipesListSerializer)
+                          RecipesSerializer,
+                          TagSerializer,
+                          RecipesListSerializer)
 from ..users.serializers import UserSerializer
 
 User = get_user_model()
 
 
-# class StandardResultsSetPagination(PageNumberPagination):
-#     # Класс ModelViewSet предоставляет следующие действия: .list ()
-#     # .retrieve (), .create (), .update (), .partial_update () и .destroy ()
-#     page_size = 100
-#     page_size_query_param = 'page_size'
-#     max_page_size = 1000
-
-
 class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
-    pagination_class = PaginationNull
     queryset = Ingredient.objects.all().order_by("-id")
     serializer_class = IngredientSerializer
-
+    pagination_class = PaginationNull
 
 class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Теги рецепта."""
@@ -81,7 +63,6 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
         """Добавит рецепт в избранное."""
         user = get_object_or_404(User, email=self.request.user)
         recipe = Recipes.objects.get(pk=self.kwargs["id"])
-        # user = User.objects.get(email=self.request.user)
 
         if user is None:
             raise ParseError("Неверный запрос!")
@@ -92,7 +73,6 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
         """Удалить рецепт из избранного."""
         user = get_object_or_404(User, email=self.request.user)
         recipe = Recipes.objects.get(pk=self.kwargs["id"])
-        # user = User.objects.get(email=self.request.user)
         recipe.is_favorited.remove(user)
         recipe.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -114,7 +94,6 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
             recipe = Recipes.objects.get(pk=self.kwargs["id"])
         except Recipes.DoesNotExist:
             raise Http404(f'Нет такого рецепта {self.kwargs["id"]}.')
-
         user = User.objects.get(email=self.request.user)
 
         if user is None:
@@ -147,18 +126,6 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
 
     # filterset_class = RecipesFilter
 
-    # @action(detail=True, methods=['put'])
-    # def tags(self, request, pk=None):
-    #     user = self.get_object()
-    #     tags = user.tags
-    #     print(f'tags:::::::::::::{tags}')
-    #     serializer = TagSerializer(tags, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=200)
-    #     else:
-    #         return Response(serializer.errors, status=400)
-
     def perform_create(self, serializer):
         user = User.objects.filter(email=self.request.user)
         if not user.exists():
@@ -170,20 +137,15 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'list':
-            # ...то применяем CatListSerializer
             return RecipesListSerializer
         return RecipesSerializer
-
-
-# def absolutePosition(self, x, y):
-#     return x, y
 
 
 @api_view(['GET'])
 def download_pdf(request):
     get_object_or_404(User, email=request.user)
     serializer = UserSerializer(request.user)
-    pdfmetrics.registerFont(TTFont('abc', 'static/Oswaldlight.ttf'))
+    pdfmetrics.registerFont(TTFont('abc', FONT_PDF))
     # Создайте файловый буфер для приема данных PDF.
     buffer = io.BytesIO()
 
@@ -205,10 +167,12 @@ def download_pdf(request):
     # for font in c.getAvailableFonts():
     #     print(font)
 
-    recipes = Recipes.objects.filter(is_in_shopping_cart__id=serializer.data['id'])
+    recipes = Recipes.objects.filter(
+        is_in_shopping_cart__id=serializer.data['id'])
     lines = []
     for recipe in recipes:
-        lines.append(f'#{recipe.id}:  {recipe.name} | время приготовления {recipe.cooking_time}')
+        lines.append(f'#{recipe.id}:  {recipe.name} | '
+                     f'время приготовления {recipe.cooking_time}')
         lines.append(' ')
 
     for line in lines:
@@ -234,7 +198,8 @@ def download_pdf(request):
     # FileResponse устанавливает заголовок Content-Disposition, чтобы браузеры
     # представить возможность сохранения файла.
     buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename='recipes_shopping.pdf')
+    return FileResponse(buffer, as_attachment=True,
+                        filename='recipes_shopping.pdf')
 
 
 @api_view(["POST"])

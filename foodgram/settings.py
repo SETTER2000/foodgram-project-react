@@ -16,6 +16,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
 
+FONT_PDF = os.environ.get('FONT_PDF')
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -187,3 +189,4 @@ ROLES_PERMISSIONS = {
     },
 
 }
+
