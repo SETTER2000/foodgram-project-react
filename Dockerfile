@@ -1,20 +1,15 @@
 # создать образ на основе базового слоя python (там будет ОС и интерпретатор Python)
 FROM python:3.8.5
+LABEL author='lphp@mail.ru' version=1 broken_keyboards=50
 
-# создать директорию /code
-RUN mkdir /code
+ENV DIRPATH=/code
 
-# скопировать файл requirements.txt из директории, в которой лежит докерфайл, в директорию /code
-COPY requirements.txt /code
+WORKDIR $DIRPATH
 
-# выполнить команду (как в терминале, с тем же синтаксисом) для установки пакетов из requirements.txt
-RUN pip install -r /code/requirements.txt
+COPY requirements.txt $DIRPATH
 
-# скопировать всё содержимое директории, в которой лежит докерфайл, в директорию /code
-COPY . /code
+RUN pip install -r $DIRPATH/requirements.txt
 
-## при старте контейнера выполнить runserver
-#CMD python /code/manage.py runserver 0:8000
+COPY . $DIRPATH
 
-WORKDIR /code
 CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
