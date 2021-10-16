@@ -131,4 +131,6 @@ dmypy.json
 .idea
 static/
 media/
-Будет удалено templates/
+*.origin.*
+dump.json
+#Будет удалено templates/

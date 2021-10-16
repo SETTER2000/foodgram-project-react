@@ -1,34 +1,38 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:13.3
+  db:
+    image: postgres:12.4
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
-      - ./.envs/.postgres
+      - ./.env
 
   frontend:
     image: raikhert/foodgramfront:latest
     volumes:
       - frontend_data:/app/result_build/
     depends_on:
-      - postgres
+      - db
   backend:
-    image: raikhert/foodgramback:latest
+    image: setter2000/foodgram
     restart: always
     volumes:
-      - static_value:/code/backend_static/
-      - media_value:/code/backend_media/
+      - # Контейнер web будет работать с данными, хранящиеся в томе static_value,
+      # через свою директорию /code/static/
+      - static_value:/code/static/
+
+      # Данные, хранящиеся в томе media_value, будут доступны в контейнере web
+      # через директорию /code/media/
+      - media_value:/code/media/
     env_file:
-      - ./.envs/.postgres
-      - ./.envs/.django
+      - ./.env
   migrations:
     image: raikhert/foodgramback:latest
     volumes:
-      - static_value:/code/backend_static/
-      - media_value:/code/backend_media/
+      - static_value:/code/static/
+      - media_value:/code/media/
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
@@ -48,8 +52,8 @@ services:
       - frontend_data:/usr/share/nginx/html/
       - ../docs/redoc.html:/usr/share/nginx/html/foodgram/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/foodgram/docs/openapi-schema.yml
-      - static_value:/code/backend_static/
-      - media_value:/code/backend_media
+      - static_value:/code/static/
+      - media_value:/code/media
     depends_on:
       - backend
       - frontend
