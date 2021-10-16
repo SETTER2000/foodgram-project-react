@@ -27,7 +27,7 @@ class PermissonForRole(BasePermission):
     All availiable methods in SETTINGS.ROLES_PERMISSIONS.
     Needed permisson for each ViewSet passed by argument of this class like:
 
-    permissons_clases=[ROLES_PERMISSIONS.get("Genres")]
+    permissons_clases=[ROLES_PERMISSIONS.get('Genres')]
     """
 
     def __init__(self, roles_permissions) -> None:
@@ -36,18 +36,14 @@ class PermissonForRole(BasePermission):
 
     def has_permission(self, request, view):
         if request.user.is_authenticated:
-            return (
-                    request.user.is_admin
-                    or request.method in self.roles_permissions[
-                        request.user.role]
-            )
-        return request.method in self.roles_permissions["anon"]
+            return (request.user.is_admin
+                    or request.method in
+                    self.roles_permissions[request.user.role])
+        return request.method in self.roles_permissions['anon']
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated:
-            return (
-                    request.user.is_admin
-                    or request.method in self.roles_permissions[
-                        request.user.role]
-            )
-        return request.method in self.roles_permissions["anon"]
+            return (request.user.is_admin
+                    or request.method in
+                    self.roles_permissions[request.user.role])
+        return request.method in self.roles_permissions['anon']

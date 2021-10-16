@@ -1,43 +1,44 @@
 import io
-from django.http import FileResponse, Http404
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import inch
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
-from reportlab.lib.colors import HexColor
 from functools import partial
+
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import action
-from rest_framework.exceptions import ParseError
-from rest_framework import filters, permissions, viewsets, status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from backend.app.pagination import PaginationNull, PaginationAll
-from foodgram.settings import DEFAULT_FROM_EMAIL, ROLES_PERMISSIONS, FONT_PDF
-from rest_framework.response import Response
 from django.core.mail import send_mail
-from django.shortcuts import render, get_object_or_404
+from django.http import FileResponse, Http404
+from django.shortcuts import get_object_or_404, render
 from django.utils.crypto import get_random_string
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import api_view
+from reportlab.lib.colors import HexColor
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.decorators import action, api_view
+from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+
+from backend.app.pagination import PaginationAll, PaginationNull
+from foodgram.settings import DEFAULT_FROM_EMAIL, FONT_PDF, ROLES_PERMISSIONS
+
+from ..users.serializers import UserSerializer
 from .models import Ingredient, Recipes, Tag
 from .permissions import IsAuthorOrReadOnly, PermissonForRole
-from .serializers import (FavoriteSerializer,
-                          IngredientSerializer,
-                          RecipesSerializer,
-                          TagSerializer,
-                          RecipesListSerializer)
-from ..users.serializers import UserSerializer
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipesListSerializer, RecipesSerializer,
+                          TagSerializer)
 
 User = get_user_model()
 
 
 class IngredientModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Пользовательская модель пользователя с настраиваемым действием."""
-    queryset = Ingredient.objects.all().order_by("-id")
+    queryset = Ingredient.objects.all().order_by('-id')
     serializer_class = IngredientSerializer
     pagination_class = PaginationNull
+
 
 class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     """Теги рецепта."""
@@ -45,10 +46,10 @@ class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     pagination_class = PaginationNull
     permission_classes = (
-        partial(PermissonForRole, ROLES_PERMISSIONS.get("Tag")),
+        partial(PermissonForRole, ROLES_PERMISSIONS.get('Tag')),
     )
     filter_backends = (filters.SearchFilter,)
-    search_fields = ("slug",)
+    search_fields = ('slug',)
 
 
 class FavoriteModelViewSet(viewsets.ModelViewSet):
@@ -56,23 +57,23 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     permission_classes = (
         (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-        | partial(PermissonForRole, ROLES_PERMISSIONS.get("Reviews")),
+        | partial(PermissonForRole, ROLES_PERMISSIONS.get('Reviews')),
     )
 
     def get_queryset(self):
         """Добавит рецепт в избранное."""
         user = get_object_or_404(User, email=self.request.user)
-        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        recipe = Recipes.objects.get(pk=self.kwargs['id'])
 
         if user is None:
-            raise ParseError("Неверный запрос!")
+            raise ParseError('Неверный запрос!')
         recipe.is_favorited.add(user)
         return self.queryset
 
     def delete(self, request, id=None):
         """Удалить рецепт из избранного."""
         user = get_object_or_404(User, email=self.request.user)
-        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        recipe = Recipes.objects.get(pk=self.kwargs['id'])
         recipe.is_favorited.remove(user)
         recipe.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -85,31 +86,30 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
 
     # permission_classes = (
     #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-    #     | partial(PermissonForRole, ROLES_PERMISSIONS.get("Shopping")),
+    #     | partial(PermissonForRole, ROLES_PERMISSIONS.get('Shopping')),
     # )
 
     def get_queryset(self):
         """Добавит рецепт в покупки."""
         try:
-            recipe = Recipes.objects.get(pk=self.kwargs["id"])
+            recipe = Recipes.objects.get(pk=self.kwargs['id'])
         except Recipes.DoesNotExist:
-            raise Http404(f'Нет такого рецепта {self.kwargs["id"]}.')
+            raise Http404('Not found.')
         user = User.objects.get(email=self.request.user)
 
         if user is None:
-            raise ParseError("Неверный запрос!")
+            raise ParseError('Неверный запрос!')
         recipe.is_in_shopping_cart.add(user)
         return self.queryset
 
     @action(
         detail=True,
         methods=['delete'],
-        # permission_classes=[IsAuthorOrReadOnly],
         url_path=r'recipes/<int:id>/shopping_cart',
         name='Delete Shopping')
     def delete(self, request, id=None):
         """Удалить рецепт из покупок."""
-        recipe = Recipes.objects.get(pk=self.kwargs["id"])
+        recipe = Recipes.objects.get(pk=self.kwargs['id'])
         user = User.objects.get(email=self.request.user)
         recipe.is_in_shopping_cart.remove(user)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -146,12 +146,9 @@ def download_pdf(request):
     get_object_or_404(User, email=request.user)
     serializer = UserSerializer(request.user)
     pdfmetrics.registerFont(TTFont('abc', FONT_PDF))
-    # Создайте файловый буфер для приема данных PDF.
     buffer = io.BytesIO()
 
-    # Создайте объект PDF, используя буфер в качестве «файла».
     c = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
-
     c.setFillColor(HexColor('#08073b'))
     c.setFont('Courier-Bold', 36)
     c.drawCentredString(300, 100, 'Recipes Shopping')
@@ -164,9 +161,6 @@ def download_pdf(request):
     text_obj.setFont('abc', 18)
     text_obj.setFillColor(HexColor('#79797e'))
 
-    # for font in c.getAvailableFonts():
-    #     print(font)
-
     recipes = Recipes.objects.filter(
         is_in_shopping_cart__id=serializer.data['id'])
     lines = []
@@ -178,47 +172,33 @@ def download_pdf(request):
     for line in lines:
         text_obj.textLine(line)
 
-    # # перемещаем начало координат вверх и влево
-    # c.translate(inch, 750)
     c.drawText(text_obj)
-
-    # выберите цвета
     c.setStrokeColorRGB(0.2, 0.5, 0.3)
     c.setFillColorRGB(1, 0, 1)
-    # рисуем прямоугольник
-    # c.rect(inch, inch, 6 * inch, 9 * inch, fill=1)
-    # заставить текст идти прямо вверх
-    # c.rotate(90)
-    # change color
     c.setFillColorRGB(0, 0, 0.77)
-    # Закройте объект PDF аккуратно, и все готово.
     c.showPage()
     c.save()
 
-    # FileResponse устанавливает заголовок Content-Disposition, чтобы браузеры
-    # представить возможность сохранения файла.
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True,
                         filename='recipes_shopping.pdf')
 
 
-@api_view(["POST"])
+@api_view(['POST'])
 def email_auth(request):
     """Check email and send to it confirmation code for token auth."""
-    user = get_object_or_404(User, email=request.data["email"])
+    user = get_object_or_404(User, email=request.data['email'])
     confirmation_code = get_random_string()
     user.confirmation_code = confirmation_code
     user.save()
     send_mail(
-        subject="Код для генерации токена аутентификации YAMDB",
+        subject='Код для генерации токена аутентификации YAMDB',
         message=str(confirmation_code),
         from_email=DEFAULT_FROM_EMAIL,
-        recipient_list=(request.data["email"],),
-    )
+        recipient_list=(request.data['email'],))
     return Response(
-        data="Письмо с кодом для аутентификации",
-        status=status.HTTP_201_CREATED,
-    )
+        data='Письмо с кодом для аутентификации',
+        status=status.HTTP_201_CREATED)
 
 
 def index(request):

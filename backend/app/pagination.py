@@ -1,9 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from backend.app.models import Tag
-from backend.app.serializers import TagSerializer
-
 
 class PaginationAll(PageNumberPagination):
     page_size = 6
@@ -12,5 +9,6 @@ class PaginationAll(PageNumberPagination):
 
 class PaginationNull(PageNumberPagination):
     """Без пагинации."""
+
     def get_paginated_response(self, data):
         return Response(data)

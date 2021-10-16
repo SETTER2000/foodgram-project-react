@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework.fields import CurrentUserDefault
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from ..app.serializers import RecipesMinSerializer
 from .models import Subscriptions, User
-from ..app.serializers import RecipesListSerializer, RecipesMinSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,10 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
             'password',
         )
 
-    # extra_kwargs = {'password': {'write_only': True, 'min_length': 4}}
     def get_is_subscribed(self, obj):
-        print(f'OBJ:::; {obj}')
-        print(f'OBJ222:::; {serializers.CurrentUserDefault()}')
+        pass
 
     def to_representation(self, obj):
         rep = super(UserSerializer, self).to_representation(obj)
