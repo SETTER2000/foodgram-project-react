@@ -1,7 +1,22 @@
 import os
 from datetime import timedelta
-
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 import dotenv
+
+sentry_sdk.init(
+    dsn="https://9ebbbce0f7244178ac893020081ff7df@o960815.ingest.sentry.io/6010342",
+    integrations=[DjangoIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
 
 dotenv.load_dotenv()
 
@@ -12,9 +27,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 
 DEFAULT_FROM_EMAIL = 'admin@example.com'
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
+#ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = ['*']
 
 FONT_PDF = os.environ.get('FONT_PDF')
 
