@@ -5,9 +5,7 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
-from backend.app.pagination import PaginationNull
 from foodgram.settings import DEFAULT_FROM_EMAIL
-
 from .mixin import CreateListModelMixinViewSet
 from .models import User
 from .serializers import UserSerializer
@@ -18,12 +16,6 @@ class SubscriptionsModelViewSet(viewsets.ModelViewSet):
     В выдачу добавляются рецепты."""
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    # pagination_class = PaginationNull
-
-    # permission_classes = (
-    #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-    #     | partial(PermissonForRole, ROLES_PERMISSIONS.get("Reviews")),
-    # )
 
     def get_queryset(self):
         """Добавит рецепт в избранное."""
@@ -33,19 +25,18 @@ class SubscriptionsModelViewSet(viewsets.ModelViewSet):
             subscription = User.objects.filter(
                 subscriptions__in=[user.id])
             if len(subscription) > 0 and subscription[0].email == author.email:
-                raise ParseError("Вы уже подписаны на этого пользователя.")
+                raise ParseError('Вы уже подписаны на этого пользователя.')
             if self.request.user.id == author.id:
-                raise ParseError("Вы не можете подписаться на себя.")
+                raise ParseError('Вы не можете подписаться на себя.')
             user.is_subscribed.add(author)
             user.save()
         return self.queryset.filter(
             id__in=[x.id for x in user.is_subscribed.all()])
 
-
     def delete(self, request, id=None):
         """Удалить рецепт из избранного."""
         user = User.objects.get(email=request.user)
-        author = get_object_or_404(User, id=self.kwargs["id"])
+        author = get_object_or_404(User, id=self.kwargs['id'])
         user.is_subscribed.remove(author)
         return Response(status=status.HTTP_204_NO_CONTENT)
 

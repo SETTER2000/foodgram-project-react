@@ -14,14 +14,8 @@ router_v1.register(r'recipes/(?P<id>[0-9]+)/favorite',
 router_v1.register(r'recipes/(?P<id>[0-9]+)/shopping_cart',
                    vs.ShoppingCardModelViewSet, basename='shopping_cart')
 
-# router_v1.register(r'recipes/download_shopping_cart',
-#                    vs.download_pdf.as_view(), basename='download_pdf')
-
 urlpatterns = [
-    # re_path(r'^', include(router_v1.urls)),
-    path('recipes/download_shopping_cart/',  vs.download_pdf,
-         name='download_pdf')
-
-]
+    path('recipes/download_shopping_cart/', vs.download_pdf,
+         name='download_pdf')]
 
 urlpatterns += router_v1.urls

@@ -145,7 +145,6 @@ DJOSER = {
     'USER_ID_FIELD': 'id',
 }
 
-
 SILENCED_SYSTEM_CHECKS = ['auth.E003', 'auth.W004']
 
 SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=30)}
@@ -186,7 +185,4 @@ ROLES_PERMISSIONS = {
         'user': ('GET',),
         'moderator': ('GET',),
         'anon': ('GET',),
-    },
-
-}
-
+    }, }

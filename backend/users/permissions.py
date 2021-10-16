@@ -47,7 +47,7 @@ class AllowPostAnyReadAuthenticatedUser(BasePermission):
 
     def has_permission(self, request, view):
         # Allow anyone to register
-        if request.method == "POST":
+        if request.method == 'POST':
             return True
         # Must be authenticated to view
         else:

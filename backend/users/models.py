@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-validate_name = RegexValidator('^[\w.@+-]+$')
+validate_name = RegexValidator(r'^[\w.@+-]+$')
 
 
 class User(AbstractUser):

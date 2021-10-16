@@ -3,9 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
-from rest_framework.decorators import action
 from rest_framework.fields import CharField
-
 from foodgram.settings import SUB_DIR_RECIPES
 
 User = get_user_model()
@@ -78,8 +76,7 @@ class Recipes(models.Model):
         blank=True,
         related_name='favorite_recipe',
         help_text='Представлен, лоигны пользователей, кто добавил этот '
-                  'рецепт себе в избранное.'
-    )
+                  'рецепт себе в избранное.')
 
     is_in_shopping_cart = models.ManyToManyField(
         'users.User',
@@ -97,10 +94,7 @@ class Recipes(models.Model):
 
     ingredients = models.ManyToManyField(
         'Ingredient',
-        through='RecipesIngredients'
-        # blank=True,
-        # related_name='recipes')
-    )
+        through='RecipesIngredients')
 
     tags = models.ManyToManyField(
         'Tag', blank=True,
@@ -122,16 +116,7 @@ class RecipesIngredients(models.Model):
     amount = models.IntegerField(_('Количество'), default=1)
 
     class Meta:
-        unique_together = ('ingredient', 'recipe','amount')
-
-#
-# class IngredientInRecipe(models.Model):
-#     """ В этой модели будут связаны id рецепта и id его ингредиента."""
-#     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-#     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return f'{self.ingredient} {self.recipe}'
+        unique_together = ('ingredient', 'recipe', 'amount')
 
 
 class RecipesTags(models.Model):
@@ -142,16 +127,6 @@ class RecipesTags(models.Model):
     def __str__(self):
         return f'{self.tag} {self.recipes}'
 
-
-#
-# class TagRecipes(models.Model):
-#     """ В этой модели будут связаны id рецепта и id его тега."""
-#     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-#     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return f'{self.tag} {self.recipe}'
-#
 
 class Favorite(models.Model):
     """Избранные рецепты."""
@@ -172,17 +147,3 @@ class Favorite(models.Model):
         ordering = ('name',)
         verbose_name = 'Фаворит'
         verbose_name_plural = 'Фавориты'
-
-#
-# class Follower(models.Model):
-#     """Подписчики."""
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name='owner')
-#     subscriber = models.ForeignKey(
-#         User, on_delete=models.CASCADE,
-#         related_name='subscriber')
-#
-#     def __str__(self):
-#         return f'{self.subscriber} подписан на {self.user}'

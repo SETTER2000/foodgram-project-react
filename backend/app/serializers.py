@@ -6,8 +6,8 @@ from rest_framework import serializers
 
 from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 
-from .models import (Favorite, Ingredient, Recipes,
-                     Tag, User, RecipesIngredients)
+from .models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
+                     User)
 
 
 class Base64ImageFieldToFile(serializers.Field):
@@ -121,14 +121,14 @@ class RecipesSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Добавляет автора рецепта при создании."""
         representation = super().to_representation(instance)
-        representation["author"] = AuthorSerializer(instance.author).data
+        representation['author'] = AuthorSerializer(instance.author).data
         return representation
 
     def create(self, validated_data):
-        img = validated_data["data"]["image"]
+        img = validated_data['data']['image']
         ingredients_data = validated_data['data'].pop('ingredients')
         tags_data = validated_data['data'].pop('tags')
-        validated_data["data"]["image"] = image_convert(img)
+        validated_data['data']['image'] = image_convert(img)
 
         recipe = Recipes.objects.create(**validated_data['data'])
         recipe.author = validated_data['author']
@@ -138,26 +138,26 @@ class RecipesSerializer(serializers.ModelSerializer):
             tg.recipes.add(recipe)
             tg.save()
         for ingredient_data in ingredients_data:
-            ingredient = Ingredient.objects.get(id=ingredient_data["id"])
+            ingredient = Ingredient.objects.get(id=ingredient_data['id'])
             recipe.ingredients.add(ingredient)
             recipe.save()
             ri = RecipesIngredients.objects.last()
-            ri.amount = ingredient_data["amount"]
+            ri.amount = ingredient_data['amount']
             ri.save()
         return recipe
 
     def update(self, instance, validated_data):
         RecipesIngredients.objects.filter(recipe=instance).delete()
-        ingredients = self.initial_data.get("ingredients")
-        tags_data = self.initial_data.get("tags")
+        ingredients = self.initial_data.get('ingredients')
+        tags_data = self.initial_data.get('tags')
         tags_data = Tag.objects.filter(id__in=tags_data)
         instance.tags.clear()
         for tag in tags_data:
             tag.recipes.add(instance)
             tag.save()
         for ingredient in ingredients:
-            id = ingredient.get("id")
-            amount = ingredient.get("amount")
+            id = ingredient.get('id')
+            amount = ingredient.get('amount')
             new_ingredient = Ingredient.objects.get(pk=id)
             RecipesIngredients(recipe=instance, ingredient=new_ingredient,
                                amount=amount).save()
@@ -208,18 +208,18 @@ class RecipesListSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         """Устанавливает флаг для избранных рецептов."""
-        email = self.context["request"].user
+        email = self.context['request'].user
         return len(obj.is_favorited.filter(email=email))
 
     def get_is_in_shopping_cart(self, obj):
         """Устанавливает флаг для купленных рецептов."""
-        email = self.context["request"].user
+        email = self.context['request'].user
         return len(obj.is_in_shopping_cart.filter(email=email))
 
     def to_representation(self, instance):
         """Добавляет автора рецепта при создании."""
         representation = super().to_representation(instance)
-        representation["author"] = AuthorSerializer(instance.author).data
+        representation['author'] = AuthorSerializer(instance.author).data
         return representation
 
 
