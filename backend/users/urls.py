@@ -1,5 +1,6 @@
 from django.urls import include, re_path
 from rest_framework import routers
+
 from . import views as vs
 
 router_v1 = routers.DefaultRouter()
