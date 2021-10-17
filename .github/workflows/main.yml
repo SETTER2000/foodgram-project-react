@@ -66,6 +66,15 @@ jobs:
           sudo docker pull setter2000/foodgramback
           #остановка всех контейнеров
           sudo docker stop $(sudo docker ps -a -q)
+          # Создаст файл для переменных окружения.
+          touch .envs/.postgres
+          # Наполнит файл переменными окружения из секретов GitHub
+          echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .envs/.postgres
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .envs/.postgres
+          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .envs/.postgres
+          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .envs/.postgres
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .envs/.postgres
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .envs/.postgres
           sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
 
   send_message:
