@@ -63,8 +63,7 @@ class UserModelViewSet(CreateListModelMixinViewSet):
             return Response(data)
 
         serializer = self.get_serializer(
-            request.user, data=request.data, partial=True
-        )
+            request.user, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -82,9 +81,8 @@ def email_auth(request):
         subject='Код для генерации токена аутентификации',
         message=str(confirmation_code),
         from_email=DEFAULT_FROM_EMAIL,
-        recipient_list=(request.data['email'],),
+        recipient_list=(request.data['email'],)
     )
     return Response(
         data='Письмо с кодом для аутентификации',
-        status=status.HTTP_201_CREATED,
-    )
+        status=status.HTTP_201_CREATED)
