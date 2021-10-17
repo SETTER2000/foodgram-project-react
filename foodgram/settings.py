@@ -29,7 +29,7 @@ DEFAULT_FROM_EMAIL = 'admin@example.com'
 
 DEBUG = True
 
-#ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
+# ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
 ALLOWED_HOSTS = ['*']
 
 FONT_PDF = os.environ.get('FONT_PDF')
@@ -89,7 +89,7 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-         'ENGINE': os.environ.get('DB_ENGINE'),
+        'ENGINE': os.environ.get('DB_ENGINE'),
         'NAME': os.environ.get('DB_NAME'),
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
