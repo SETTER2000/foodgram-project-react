@@ -1,8 +1,9 @@
 import os
 from datetime import timedelta
+
+import dotenv
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-import dotenv
 
 sentry_sdk.init(
     dsn="https://9ebbbce0f7244178ac893020081ff7df@o960815.ingest.sentry.io/6010342",
