@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:12
+    image: postgres:12.4
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -33,7 +33,7 @@ services:
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
-             python manage.py createadmin &&
+             python manage.py create admin &&
              python manage.py filldb"
     depends_on:
       - backend
