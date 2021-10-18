@@ -1,8 +1,6 @@
 from django.contrib import admin
-
+from foodgram.settings import EVD
 from . import models
-
-EVD = '-пусто-'
 
 
 @admin.register(models.Ingredient)
