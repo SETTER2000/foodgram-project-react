@@ -32,6 +32,9 @@ _Документация по API будет доступна после уст
 
 <a href="https://docs.docker.com/desktop/windows/install/">Windows 10</a>
 
+##  логин/пароль админа
+
+admin/Tel-555555
 
 ### Автор
 <a href="https://github.com/SETTER2000">SETTER2000</a>
