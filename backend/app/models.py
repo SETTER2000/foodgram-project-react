@@ -12,7 +12,6 @@ User = get_user_model()
 
 class Ingredient(models.Model):
     """Ингредиенты входящие в состав рецепта."""
-
     name = models.CharField(
         'Ингредиент',
         max_length=150)
@@ -23,14 +22,13 @@ class Ingredient(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
 
 class Tag(models.Model):
     """Теги рецепта."""
-
     name = models.TextField(
         'Название тега',
         max_length=70,
@@ -38,8 +36,13 @@ class Tag(models.Model):
         db_index=True
     )
 
-    color = models.CharField('Цветовой HEX-код', unique=True, max_length=7)
-    slug = models.SlugField('URL', unique=True)
+    color = models.CharField(
+        'Цветовой HEX-код',
+        unique=True,
+        max_length=7)
+    slug = models.SlugField(
+        'URL',
+        unique=True)
 
     def __str__(self) -> TextField:
         return self.name
@@ -52,7 +55,6 @@ class Tag(models.Model):
 
 class Recipes(models.Model):
     """Рецепты блюд."""
-
     REQUIRED_FIELDS = [
         'name',
         'ingredients',
@@ -62,15 +64,17 @@ class Recipes(models.Model):
         'cooking_time']
 
     image = models.ImageField(upload_to=SUB_DIR_RECIPES)
-    name = models.CharField('Название', max_length=200, )
+    name = models.CharField(
+        'Название',
+        max_length=200, )
     text = models.TextField('Описание', )
 
     cooking_time = models.IntegerField(
         'Время приготовления (в минутах)',
         default=1,
         validators=[
-            MaxValueValidator(10000),
-            MinValueValidator(1)])
+            MaxValueValidator(1000,  message='Время приготовления макс. 1000 мин.'),
+            MinValueValidator(1,  message='Время приготовления нужно заполнить.')])
 
     is_favorited = models.ManyToManyField(
         'users.User',
@@ -98,32 +102,51 @@ class Recipes(models.Model):
         through='RecipesIngredients')
 
     tags = models.ManyToManyField(
-        'Tag', blank=True,
+        'Tag',
+        blank=True,
         related_name='recipes')
 
     def __str__(self) -> CharField:
         return self.name
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
 
 class RecipesIngredients(models.Model):
     """ В этой модели будут связаны id рецепта и id его ингредиента."""
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
-    amount = models.IntegerField(_('Количество'), default=1)
+    ingredient = models.ForeignKey(
+        Ingredient,
+        verbose_name='Ингредиент',
+        on_delete=models.CASCADE)
+    recipe = models.ForeignKey(
+        Recipes,
+        verbose_name='Рецепт',
+        on_delete=models.CASCADE)
+    amount = models.IntegerField(
+        _('Количество'),
+        default=1,
+        validators=[MinValueValidator(1,  message='Количество нужно заполнить.')])
 
     class Meta:
-        unique_together = ('ingredient', 'recipe', 'amount')
+        unique_together = (
+            'ingredient',
+            'recipe',
+            'amount')
 
 
 class RecipesTags(models.Model):
     """ В этой модели будут связаны id рецепта и id его тега."""
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    recipes = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        Tag,
+        verbose_name='Тег',
+        on_delete=models.CASCADE)
+    recipes = models.ForeignKey(
+        Recipes,
+        verbose_name='Рецепт',
+        on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.tag} {self.recipes}'
@@ -131,7 +154,9 @@ class RecipesTags(models.Model):
 
 class Favorite(models.Model):
     """Избранные рецепты."""
-    name = models.CharField('Название', max_length=200, )
+    name = models.CharField(
+        'Название',
+        max_length=200, )
     image = models.CharField(
         'Картинка рецепта',
         help_text='Ссылка на картинку на сайте',
@@ -139,7 +164,7 @@ class Favorite(models.Model):
     cooking_time = models.IntegerField(
         'Время приготовления (в минутах)',
         default=1,
-        validators=[MinValueValidator(1)])
+        validators=[MinValueValidator(1,  message='Время приготовления нужно заполнить.')])
 
     def __str__(self) -> str:
         return self.name

@@ -23,11 +23,10 @@ dotenv.load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECRET_KEY = '^r!^)ap$rs_vn6rkx^5qa5ap*qktwo%sfco74fg0577@#c5#*&'
 SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 
 DEFAULT_FROM_EMAIL = 'admin@example.com'
-
+EVD = '-пусто-'
 DEBUG = True
 
 # ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
