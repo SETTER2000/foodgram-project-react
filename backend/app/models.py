@@ -73,8 +73,12 @@ class Recipes(models.Model):
         'Время приготовления (в минутах)',
         default=1,
         validators=[
-            MaxValueValidator(1000,  message='Время приготовления макс. 1000 мин.'),
-            MinValueValidator(1,  message='Время приготовления нужно заполнить.')])
+            MaxValueValidator(
+                1000,
+                message='Время приготовления макс. 1000 мин.'),
+            MinValueValidator(
+                1,
+                message='Время приготовления нужно заполнить.')])
 
     is_favorited = models.ManyToManyField(
         'users.User',
@@ -128,7 +132,8 @@ class RecipesIngredients(models.Model):
     amount = models.IntegerField(
         _('Количество'),
         default=1,
-        validators=[MinValueValidator(1,  message='Количество нужно заполнить.')])
+        validators=[
+            MinValueValidator(1, message='Количество нужно заполнить.')])
 
     class Meta:
         unique_together = (
@@ -164,7 +169,8 @@ class Favorite(models.Model):
     cooking_time = models.IntegerField(
         'Время приготовления (в минутах)',
         default=1,
-        validators=[MinValueValidator(1,  message='Время приготовления нужно заполнить.')])
+        validators=[MinValueValidator(1,
+                                      message='Время приготовления нужно заполнить.')])
 
     def __str__(self) -> str:
         return self.name

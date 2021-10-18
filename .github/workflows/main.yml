@@ -76,8 +76,7 @@ jobs:
           echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .envs/.postgres
           echo DB_HOST=${{ secrets.DB_HOST }} >> .envs/.postgres
           echo DB_PORT=${{ secrets.DB_PORT }} >> .envs/.postgres
-          echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/
-          .postgres
+          echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.postgres
 
           sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
 
