@@ -169,8 +169,10 @@ class Favorite(models.Model):
     cooking_time = models.IntegerField(
         'Время приготовления (в минутах)',
         default=1,
-        validators=[MinValueValidator(1,
-                                      message='Время приготовления нужно заполнить.')])
+        validators=[
+            MinValueValidator(
+                1,
+                message='Время приготовления нужно заполнить.')])
 
     def __str__(self) -> str:
         return self.name
