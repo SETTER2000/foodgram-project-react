@@ -134,4 +134,4 @@ media/
 *.origin.*
 *.old.*
 dump.json
-#Будет удалено templates/
+.env.template
