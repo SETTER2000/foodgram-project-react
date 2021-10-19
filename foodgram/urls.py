@@ -6,7 +6,6 @@ from django.urls import include, path
 from backend.app.views import index
 
 urlpatterns = [
-
     path('admin/', admin.site.urls),
     path('', index),
     path('api/auth/', include('djoser.urls.authtoken')),
@@ -14,7 +13,6 @@ urlpatterns = [
     # path('api/', include('backend.app.urls')),
     # path('api/', include('backend.users.urls', namespace='backend.users')),
     path('api/', include('backend.app.urls', namespace='backend.app')),
-
     path('api/', include('djoser.urls')),
 ]
 
