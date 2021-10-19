@@ -55,39 +55,38 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
     steps:
-    - name: executing remote ssh commands to deploy
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          # Выполняет pull образа с DockerHub
-          sudo docker pull setter2000/foodgramback
-          #остановка всех контейнеров
-          sudo docker stop $(sudo docker ps -a -q)
-          # Создаст файл для переменных окружения.
-          rm -rf .envs/.postgres
-          touch .envs/.postgres
-          # Наполнит файл переменными окружения из секретов GitHub
-          echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .envs/.postgres
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .envs/.postgres
-          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .envs/.postgres
-          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .envs/.postgres
-          echo DB_HOST=${{ secrets.DB_HOST }} >> .envs/.postgres
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .envs/.postgres
-          echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/
-          .postgres
+      - name: executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # Выполняет pull образа с DockerHub
+            sudo docker pull setter2000/foodgramback
+            #остановка всех контейнеров
+            sudo docker stop $(sudo docker ps -a -q)
+            # Создаст файл для переменных окружения.
+            rm -rf .envs/.postgres
+            touch .envs/.postgres
+            # Наполнит файл переменными окружения из секретов GitHub
+            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .envs/.postgres
+            echo DB_NAME=${{ secrets.DB_NAME }} >> .envs/.postgres
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .envs/.postgres
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .envs/.postgres
+            echo DB_HOST=${{ secrets.DB_HOST }} >> .envs/.postgres
+            echo DB_PORT=${{ secrets.DB_PORT }} >> .envs/.postgres
+            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.postgres
 
-          sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
+            sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
 
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-    - name: send message
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: ${{ github.workflow }} успешно выполнен!
+      - name: send message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: ${{ github.workflow }} успешно выполнен!
