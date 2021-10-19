@@ -1,6 +1,6 @@
 import os
-import environ
-env = environ.Env()
+# import environ
+# env = environ.Env()
 from datetime import timedelta
 
 import dotenv
