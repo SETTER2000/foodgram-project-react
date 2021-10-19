@@ -201,5 +201,5 @@ def email_auth(request):
         status=status.HTTP_201_CREATED)
 
 
-def index(request):
-    return render(request, 'index.html', {})
+#def index(request):
+ #   return render(request, 'index.html', {})
