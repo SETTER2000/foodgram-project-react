@@ -78,7 +78,7 @@ jobs:
             echo DB_PORT=${{ secrets.DB_PORT }} >> .envs/.postgres
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.postgres
 
-            sudo docker run --rm -d -p 5000:5000 setter2000/foodgramback
+            sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
 
   send_message:
     runs-on: ubuntu-latest
