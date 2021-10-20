@@ -5,7 +5,7 @@ RUN mkdir /code
 
 ENV DIRPATH=/code
 
-#WORKDIR $DIRPATH
+WORKDIR $DIRPATH
 
 COPY requirements.txt $DIRPATH
 
