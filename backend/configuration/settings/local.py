@@ -12,7 +12,6 @@ SECRET_KEY = env(
 )
 
 ALLOWED_HOSTS = ("*",)
-# ALLOWED_HOSTS = ("localhost", "0.0.0.0", "127.0.0.1")
 
 INSTALLED_APPS += ["debug_toolbar"]
 
@@ -24,7 +23,6 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 INTERNAL_IPS = ["*"]
-# INTERNAL_IPS = ["127.0.0.1", "10.129.0.8", "10.0.2.2"]
 
 INSTALLED_APPS += ["django_extensions"]
 

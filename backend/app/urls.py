@@ -1,13 +1,8 @@
+from app.views import (FavoriteModelViewSet, IngredientModelViewSet,
+                       RecipesModelViewSet, ShoppingCardModelViewSet,
+                       TagModelViewSet, download_pdf)
 from django.urls import path
 from rest_framework import routers
-
-from app.views import (
-    IngredientModelViewSet,
-    TagModelViewSet,
-    RecipesModelViewSet,
-    FavoriteModelViewSet,
-    ShoppingCardModelViewSet,
-    download_pdf)
 
 app_name = 'backend.app'
 router_v1 = routers.DefaultRouter()

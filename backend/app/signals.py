@@ -1,8 +1,8 @@
 import os
 
+from app.models import Recipes
 from django.db import models
 from django.dispatch import receiver
-from app.models import Recipes
 
 
 @receiver(models.signals.post_delete, sender=Recipes)

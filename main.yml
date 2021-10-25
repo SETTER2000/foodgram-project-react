@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+defaults:
+  run:
+    working-directory: backend
+
 jobs:
   tests:
     runs-on: ubuntu-latest

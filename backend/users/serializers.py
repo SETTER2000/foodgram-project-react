@@ -1,7 +1,7 @@
+from app.serializers import RecipesMinSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from app.serializers import RecipesMinSerializer
 from users.models import Subscriptions
 
 User = get_user_model()
