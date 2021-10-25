@@ -7,7 +7,6 @@ on:
 
 jobs:
   tests:
-    name: Check codestyle, run test.
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
