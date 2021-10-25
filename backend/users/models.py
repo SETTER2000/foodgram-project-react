@@ -3,8 +3,8 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from django.db import models
-from django.db.models import UniqueConstraint
+# from django.db import models
+# from django.db.models import UniqueConstraint
 from django.utils import timezone
 # from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
