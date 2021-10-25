@@ -7,10 +7,9 @@ on:
 
 jobs:
   tests:
-    name: Check codestyle, run test.
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out the repo
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -20,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements/production.txt
          
 
       - name: Test with flake8
