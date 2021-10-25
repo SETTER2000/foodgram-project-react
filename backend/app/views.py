@@ -2,7 +2,7 @@ import io
 
 from app.models import Ingredient, Recipes, Tag
 from app.pagination import PaginationAll, PaginationNull
-from app.permissions import IsAuthorOrReadOnly, PermissonForRole
+from app.permissions import IsAuthorOrReadOnly
 from app.serializers import (FavoriteSerializer, IngredientSerializer,
                              RecipesListSerializer, RecipesSerializer,
                              TagSerializer)
