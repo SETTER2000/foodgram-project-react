@@ -42,9 +42,6 @@ class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = PaginationNull
-    # permission_classes = (
-    #     partial(PermissonForRole, settings.ROLES_PERMISSIONS.get('Tag')),
-    # )
     filter_backends = (filters.SearchFilter,)
     search_fields = ('slug',)
 
@@ -54,7 +51,6 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     permission_classes = (
         (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-        # | partial(PermissonForRole, settings.ROLES_PERMISSIONS.get('Reviews')),
     )
 
     def get_queryset(self):
@@ -80,12 +76,6 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
     serializer_class = RecipesSerializer
     queryset = Recipes.objects.all()
     pagination_class = PaginationAll
-
-    # permission_classes = (
-    #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-    #     | partial(PermissonForRole, settings.ROLES_PERMISSIONS.get(
-    # 'Shopping')),
-    # )
 
     def get_queryset(self):
         """Добавит рецепт в покупки."""
@@ -121,8 +111,6 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
                           permissions.IsAuthenticatedOrReadOnly]
     parser_classes = (MultiPartParser, JSONParser)
     filter_backends = (DjangoFilterBackend,)
-
-    # filterset_class = RecipesFilter
 
     def perform_create(self, serializer):
         user = User.objects.filter(email=self.request.user)

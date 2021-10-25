@@ -119,7 +119,8 @@ class Recipes(models.Model):
 
 
 class RecipesIngredients(models.Model):
-    """ В этой модели будут связаны id рецепта и id его ингредиента."""
+    """ В этой модели будут связаны id рецепта и
+    id его ингредиента."""
     ingredient = models.ForeignKey(
         Ingredient,
         verbose_name='Ингредиент',
