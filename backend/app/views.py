@@ -1,5 +1,4 @@
 import io
-from functools import partial
 
 from app.models import Ingredient, Recipes, Tag
 from app.pagination import PaginationAll, PaginationNull
