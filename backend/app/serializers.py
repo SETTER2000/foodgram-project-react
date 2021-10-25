@@ -2,13 +2,8 @@ import base64
 import os
 import time
 
-from app.models import (
-    Favorite,
-    Ingredient,
-    Recipes,
-    RecipesIngredients,
-    Tag,
-    User)
+from app.models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
+                        User)
 from django.conf import settings
 from rest_framework import serializers
 
