@@ -12,3 +12,11 @@ class PaginationNull(PageNumberPagination):
 
     def get_paginated_response(self, data):
         return Response(data)
+
+
+
+class FoodgramPagination(PageNumberPagination):
+
+    page_size = 10
+    page_query_param = "page"
+    page_size_query_param = "limit"

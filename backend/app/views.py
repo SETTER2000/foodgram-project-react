@@ -20,13 +20,12 @@ from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from backend.app.pagination import PaginationAll, PaginationNull
-from foodgram.settings import DEFAULT_FROM_EMAIL, FONT_PDF, ROLES_PERMISSIONS
-
-from ..users.serializers import UserSerializer
-from .models import Ingredient, Recipes, Tag
-from .permissions import IsAuthorOrReadOnly, PermissonForRole
-from .serializers import (FavoriteSerializer, IngredientSerializer,
+from app.pagination import PaginationAll, PaginationNull
+from django.conf import settings
+from users.serializers import UserSerializer
+from app.models import Ingredient, Recipes, Tag
+from app.permissions import IsAuthorOrReadOnly, PermissonForRole
+from app.serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipesListSerializer, RecipesSerializer,
                           TagSerializer)
 
@@ -45,9 +44,9 @@ class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = PaginationNull
-    permission_classes = (
-        partial(PermissonForRole, ROLES_PERMISSIONS.get('Tag')),
-    )
+    # permission_classes = (
+    #     partial(PermissonForRole, settings.ROLES_PERMISSIONS.get('Tag')),
+    # )
     filter_backends = (filters.SearchFilter,)
     search_fields = ('slug',)
 
@@ -57,7 +56,7 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     permission_classes = (
         (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-        | partial(PermissonForRole, ROLES_PERMISSIONS.get('Reviews')),
+        # | partial(PermissonForRole, settings.ROLES_PERMISSIONS.get('Reviews')),
     )
 
     def get_queryset(self):
@@ -86,7 +85,8 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
 
     # permission_classes = (
     #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-    #     | partial(PermissonForRole, ROLES_PERMISSIONS.get('Shopping')),
+    #     | partial(PermissonForRole, settings.ROLES_PERMISSIONS.get(
+    # 'Shopping')),
     # )
 
     def get_queryset(self):
@@ -145,7 +145,7 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
 def download_pdf(request):
     get_object_or_404(User, email=request.user)
     serializer = UserSerializer(request.user)
-    pdfmetrics.registerFont(TTFont('abc', FONT_PDF))
+    pdfmetrics.registerFont(TTFont('abc', settings.FONT_PDF))
     buffer = io.BytesIO()
 
     c = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
@@ -194,7 +194,7 @@ def email_auth(request):
     send_mail(
         subject='Код для генерации токена аутентификации YAMDB',
         message=str(confirmation_code),
-        from_email=DEFAULT_FROM_EMAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=(request.data['email'],))
     return Response(
         data='Письмо с кодом для аутентификации',
