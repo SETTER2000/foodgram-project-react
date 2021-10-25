@@ -90,7 +90,6 @@ jobs:
             echo DJANGO_SUPERUSER_LASTNAME=${{ secrets.DJANGO_SUPERUSER_LASTNAME }} >> .django
             echo DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }} >> .django
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .postgres
-#            sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
             sudo docker-compose -f production.yaml up -d
 
   send_message:
