@@ -4,8 +4,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 
-
 validate_name = RegexValidator(r'^[\w.@+-]+$')
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
