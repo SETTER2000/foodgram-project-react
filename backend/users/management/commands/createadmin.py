@@ -1,7 +1,7 @@
 import environ
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from users.models import CustomUser
+from users.models import User
 
 env = environ.Env()
 
@@ -17,7 +17,7 @@ DJANGO_SUPERUSER_PASSWORD = env('DJANGO_SUPERUSER_PASSWORD')
 class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
-            CustomUser.objects.create_superuser(
+            User.objects.create_superuser(
                 email=DJANGO_SUPERUSER_EMAIL,
                 username=DJANGO_SUPERUSER_USERNAME,
                 first_name=DJANGO_SUPERUSER_FIRSTNAME,
