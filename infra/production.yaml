@@ -16,7 +16,7 @@ services:
     depends_on:
       - postgres
   backend:
-    image: raikhert/foodgramback:latest
+    image: setter2000/foodgramback:latest
     restart: always
     volumes:
       - static_value:/code/backend_static/
@@ -25,7 +25,7 @@ services:
       - ./.envs/.postgres
       - ./.envs/.django
   migrations:
-    image: raikhert/foodgramback:latest
+    image: setter2000/foodgramback:latest
     volumes:
       - static_value:/code/backend_static/
       - media_value:/code/backend_media/
