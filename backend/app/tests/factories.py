@@ -2,11 +2,7 @@ import random
 import urllib
 
 import factory
-from app.models import (
-    Ingredient,
-    Recipes,
-    RecipesIngredients,
-    Tag)
+from app.models import Ingredient, Recipes, RecipesIngredients, Tag
 from django.core.files.base import ContentFile
 from faker import Faker
 from users.models import User

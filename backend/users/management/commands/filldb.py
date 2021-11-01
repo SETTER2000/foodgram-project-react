@@ -3,10 +3,7 @@ from random import randint
 
 import factory
 from app.models import Ingredient, Recipes, Tag
-from app.tests.factories import (
-    IngredientFactory,
-    RecipeFactory,
-    TagFactory)
+from app.tests.factories import IngredientFactory, RecipeFactory, TagFactory
 from django.core.management.base import BaseCommand
 from users.tests.factories import SubscribeFactory, UserFactory
 
