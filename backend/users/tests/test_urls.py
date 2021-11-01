@@ -2,7 +2,10 @@ from app.tests.factories import IngredientFactory, RecipeFactory, TagFactory
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 from users.tests.factories import UserFactory
+import os
+from django.conf.urls import url
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mc_backend.settings')
 
 class UrlUsersTests(APITestCase):
     @classmethod
