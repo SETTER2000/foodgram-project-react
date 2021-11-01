@@ -5,11 +5,9 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from users.models import Subscribe
 
-from backend import configuration
 
-DJANGO_SETTINGS_MODULE=configuration.settings.prod
 from .factories import SubscribeFactory, UserFactory
-settings.configure()
+
 User = get_user_model()
 
 
