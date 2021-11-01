@@ -32,7 +32,7 @@ class Tag(models.Model):
 
     class Color(models.TextChoices):
         ORANGE = '#E26C2D', _('Оранжевый')
-        GREEN = '#49B64E',  _('Зелёный')
+        GREEN = '#49B64E', _('Зелёный')
         PURPLE = '#8775D2', _('Фиолетовый')
 
     name = models.TextField(

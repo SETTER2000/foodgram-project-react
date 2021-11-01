@@ -2,16 +2,13 @@ import random
 import urllib
 
 import factory
+from app.models import (
+    Ingredient,
+    Recipes,
+    RecipesIngredients,
+    Tag)
 from django.core.files.base import ContentFile
 from faker import Faker
-from app.models import (
-    Favorite,
-    Ingredient,
-    RecipesIngredients,
-    Recipes,
-    # ShoppingCart,
-    Tag,
-)
 from users.models import User
 
 fake = Faker(["ru_Ru"])
@@ -92,7 +89,6 @@ class RecipeFactory(factory.django.DjangoModelFactory):
 
         image = urllib.request.urlopen("https://picsum.photos/800/800").read()
         self.image.save(self.name + ".jpg", ContentFile(image), save=False)
-
 
 # class FavoriteRecipeFactory(factory.django.DjangoModelFactory):
 #     class Meta:

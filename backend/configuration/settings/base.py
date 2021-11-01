@@ -1,5 +1,5 @@
 import os
-from pathlib import Path
+# from pathlib import Path
 
 import environ
 
@@ -13,8 +13,6 @@ DEBUG = True
 
 SITE_ID = 1
 ALLOWED_HOSTS = ['*']
-
-
 
 DJANGO_APPS = [
     'django.contrib.admin',

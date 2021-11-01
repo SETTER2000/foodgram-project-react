@@ -1,14 +1,15 @@
 import os
 
 from .base import *
-from .base import env
+
+# from .base import env
 
 DEBUG = True
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 # SECRET_KEY = env('DJANGO_SECRET_KEY')
 
-ALLOWED_HOSTS =  ['*']
+ALLOWED_HOSTS = ['*']
 # ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS')
 
 DATABASES = {

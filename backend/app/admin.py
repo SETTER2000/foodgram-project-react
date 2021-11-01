@@ -1,14 +1,7 @@
+from app.models import Favorite, Ingredient, Recipes, RecipesIngredients, Tag
 from django.conf import settings
 from django.contrib import admin
 from django.utils.html import format_html
-from app.models import (
-    Ingredient,
-    Tag,
-    Favorite,
-    Recipes,
-    RecipesIngredients,
-)
-
 from utilites.mixins import AdminColor
 
 
@@ -96,18 +89,3 @@ class RecipesAdmin(admin.ModelAdmin):
         return "Картинка"
 
     image_list_preview.short_description = "Картинка"
-
-# @admin.register(Recipes)
-# class RecipesAdmin(admin.ModelAdmin):
-#     search_fields = ('id', 'name', 'image', 'text', 'author', 'cooking_time',)
-#     list_display = ('id', 'name', 'image', 'text', 'author', 'cooking_time',)
-#     list_display_list = ('name',)
-#     empty_value_display = settings.EVD
-
-
-# @admin.register(RecipesIngredients)
-# class RecipesIngredientsAdmin(admin.ModelAdmin):
-#     search_fields = ('id', 'ingredient', 'recipe', 'amount')
-#     list_display = ('id', 'ingredient', 'recipe', 'amount')
-#     list_display_list = ('id',)
-#     empty_value_display = settings.EVD

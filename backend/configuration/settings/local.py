@@ -18,7 +18,7 @@ SECRET_KEY = env(
     default='django-insecure-=3js',
 )
 
-ALLOWED_HOSTS =  ['*']
+ALLOWED_HOSTS = ['*']
 # ALLOWED_HOSTS = ("localhost", "0.0.0.0", "127.0.0.1")
 
 INSTALLED_APPS += ['debug_toolbar']

@@ -2,15 +2,12 @@ import csv
 from random import randint
 
 import factory
-from django.core.management.base import BaseCommand
 from app.models import Ingredient, Recipes, Tag
 from app.tests.factories import (
-    # FavoriteRecipeFactory,
     IngredientFactory,
     RecipeFactory,
-    # ShoppingCartFactory,
-    TagFactory,
-)
+    TagFactory)
+from django.core.management.base import BaseCommand
 from users.tests.factories import SubscribeFactory, UserFactory
 
 

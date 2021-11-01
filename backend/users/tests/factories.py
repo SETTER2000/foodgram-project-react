@@ -1,6 +1,6 @@
 import factory
 from faker import Faker
-from users.models import User, Subscriptions
+from users.models import Subscriptions, User
 
 fake = Faker(["ru-Ru"])
 

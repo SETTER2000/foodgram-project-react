@@ -1,9 +1,5 @@
+from app.tests.factories import IngredientFactory, RecipeFactory, TagFactory
 from django.urls import reverse
-from app.tests.factories import (
-    IngredientFactory,
-    RecipeFactory,
-    TagFactory,
-)
 from rest_framework.test import APIClient, APITestCase
 from users.tests.factories import UserFactory
 
