@@ -5,8 +5,11 @@ from .base import env
 
 DEBUG = False
 
-
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = env(
+    'DJANGO_SECRET_KEY',
+    default='django-insecure-=3js',
+)
+# SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
