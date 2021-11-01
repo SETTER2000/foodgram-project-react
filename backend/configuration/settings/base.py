@@ -1,8 +1,8 @@
 import os
 
+from pathlib import Path
 import environ
 
-from pathlib import Path
 
 
 env = environ.Env()

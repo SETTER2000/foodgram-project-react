@@ -5,14 +5,7 @@ from .base import *
 env = environ.Env()
 
 DEBUG = True
-USE_X_FORWARDED_HOST = True
-USE_X_FORWARDED_PORT = True
-# tail -f /tmp/debug.log .
-LOGGING = {'version': 1, 'disable_existing_loggers': False, 'handlers': {
-    'file': {'level': 'DEBUG', 'class': 'logging.FileHandler',
-             'filename': '/tmp/debug.log', }, }, 'loggers': {
-    'django': {'handlers': ['file'], 'level': 'DEBUG',
-               'propagate': True, }, }, }
+
 SECRET_KEY = env(
     'DJANGO_SECRET_KEY',
     default='django-insecure-=3js',
