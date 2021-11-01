@@ -1,6 +1,8 @@
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'configuration.settings.prod')
+
 import factory
 from faker import Faker
-settings.configure()
 from users.models import Subscriptions, User
 
 fake = Faker(["ru-Ru"])
