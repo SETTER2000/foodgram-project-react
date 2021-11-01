@@ -7,4 +7,4 @@ class AppsConfig(AppConfig):
     verbose_name = 'Рецепты'
 
     def ready(self):
-        import recipes.signals
+        import app.signals
