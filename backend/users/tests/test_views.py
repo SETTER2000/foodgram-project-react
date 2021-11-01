@@ -1,5 +1,4 @@
 from app.tests.factories import IngredientFactory, RecipeFactory, TagFactory
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
@@ -7,7 +6,6 @@ from users.models import Subscribe
 
 from .factories import SubscribeFactory, UserFactory
 
-User = get_user_model()
 
 
 class ViewUsersTests(APITestCase):
