@@ -1,3 +1,4 @@
+import os
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -7,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.fields import CharField
 from utilites.utils import slugify
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'configuration.settings.prod')
 User = get_user_model()
 
 
