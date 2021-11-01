@@ -10,23 +10,32 @@ defaults:
     working-directory: backend
 
 jobs:
-  tests:
+  tests_and_codestyle:
+    name: Check codestyle, run test.
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements/production.txt
-         
-      - name: Test with flake8
-        run: flake8 .
+    -
+      name: Check out the repo
+      uses: actions/checkout@v2
+    -
+      name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    -
+      name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements/production.txt
+    -
+      name: Lint with flake8
+      run: flake8 .
+    -
+      name: Codestyle by black
+      run: black --check .
+    -
+      name: Test with pytest
+      run: pytest
 
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
@@ -63,28 +72,24 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd ${{ github.event.repository.name }}
-            git pull
-            cd ./infra/
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgramback
             sudo docker pull raikhert/foodgramfront
-            sudo docker stop $(sudo docker ps -a -q)
-            mkdir -p ./.envs/
+            sudo docker-compose -f production.yaml stop
+            sudo docker-compose -f production.yaml rm backend
             touch .envs/.postgres
-            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .postgres
-            echo DB_NAME=${{ secrets.DB_NAME }} >> .postgres
-            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .postgres
-            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .postgres
             echo DB_HOST=${{ secrets.DB_HOST }} >> .postgres
             echo DB_PORT=${{ secrets.DB_PORT }} >> .postgres
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .postgres
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .postgres
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .postgres
             touch .envs/.django
             echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} >> .django
+            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .django
             echo DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }} >> .django
             echo DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }} >> .django
             echo DJANGO_SUPERUSER_FIRSTNAME=${{ secrets.DJANGO_SUPERUSER_FIRSTNAME }} >> .django
             echo DJANGO_SUPERUSER_LASTNAME=${{ secrets.DJANGO_SUPERUSER_LASTNAME }} >> .django
             echo DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }} >> .django
-            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .postgres
             sudo docker-compose -f production.yaml up -d
 
   send_message:

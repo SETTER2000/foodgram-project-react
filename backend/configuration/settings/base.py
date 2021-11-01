@@ -5,11 +5,16 @@ import environ
 
 env = environ.Env()
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DEBUG = env.bool('DJANGO_DEBUG', False)
+# DEBUG = env.bool('DJANGO_DEBUG', False)
+DEBUG = True
 
 SITE_ID = 1
+ALLOWED_HOSTS = ['*']
+
+
 
 DJANGO_APPS = [
     'django.contrib.admin',

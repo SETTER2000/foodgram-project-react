@@ -50,8 +50,8 @@ services:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
       - frontend_data:/usr/share/nginx/html/
-      - ../docs/redoc.html:/usr/share/nginx/html/foodgram/docs/redoc.html
-      - ../docs/openapi-schema.yml:/usr/share/nginx/html/foodgram/docs/openapi-schema.yml
+      - ../docs/redoc.html:/usr/share/nginx/html/docs/redoc.html
+      - ../docs/openapi-schema.yml:/usr/share/nginx/html/docs/openapi-schema.yml
       - static_value:/code/backend_static/
       - media_value:/code/backend_media
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"

@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
 from rest_framework.fields import CharField
+from utilites.utils import slugify
 
 User = get_user_model()
 
@@ -28,20 +29,34 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     """Теги рецепта."""
+
+    class Color(models.TextChoices):
+        ORANGE = '#E26C2D', _('Оранжевый')
+        GREEN = '#49B64E',  _('Зелёный')
+        PURPLE = '#8775D2', _('Фиолетовый')
+
     name = models.TextField(
         'Название тега',
         max_length=70,
         unique=True,
         db_index=True
     )
-
     color = models.CharField(
-        'Цветовой HEX-код',
+        'Цвет тега',
         unique=True,
-        max_length=7)
+        max_length=7,
+        choices=Color.choices,
+        help_text='Выберите цвет из списка',
+    )
     slug = models.SlugField(
         'URL',
-        unique=True)
+        unique=True
+    )
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> TextField:
         return self.name
@@ -102,7 +117,11 @@ class Recipes(models.Model):
 
     ingredients = models.ManyToManyField(
         'Ingredient',
-        through='RecipesIngredients')
+        through='RecipesIngredients',
+        through_fields=('recipe', 'ingredient'),
+        verbose_name='Ингредиенты',
+        help_text='Выберите ингредиенты из списка',
+    )
 
     tags = models.ManyToManyField(
         'Tag',
