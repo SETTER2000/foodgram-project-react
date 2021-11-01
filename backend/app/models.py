@@ -6,7 +6,7 @@ from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
 from rest_framework.fields import CharField
 from utilites.utils import slugify
-from backend.configuration.settings import prod
+from app.configuration.settings import prod
 DJANGO_SETTINGS_MODULE=prod
 
 User = get_user_model()
