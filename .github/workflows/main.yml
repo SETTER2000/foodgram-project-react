@@ -76,8 +76,7 @@ jobs:
             git pull
             cd ./infra/
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgramback
-            sudo docker pull raikhert/foodgramfront           
-#            sudo docker stop $(sudo docker ps -a -q)
+            sudo docker pull raikhert/foodgramfront
             sudo docker-compose -f production.yaml stop
             sudo docker-compose -f production.yaml rm -f backend
             sudo docker-compose -f production.yaml rm -f nginx
