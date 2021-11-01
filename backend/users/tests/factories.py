@@ -1,5 +1,3 @@
-import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'configuration.settings.prod')
 
 import factory
 from faker import Faker
