@@ -21,7 +21,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from backend.app.pagination import PaginationAll, PaginationNull
-from foodgram.settings import DEFAULT_FROM_EMAIL, FONT_PDF, ROLES_PERMISSIONS
+from backend.foodgram import DEFAULT_FROM_EMAIL, FONT_PDF, ROLES_PERMISSIONS
 
 from ..users.serializers import UserSerializer
 from .models import Ingredient, Recipes, Tag
