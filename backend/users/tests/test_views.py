@@ -5,7 +5,6 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from users.models import Subscribe
 
-
 from .factories import SubscribeFactory, UserFactory
 
 User = get_user_model()
