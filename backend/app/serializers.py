@@ -7,6 +7,14 @@ from app.models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
 from django.conf import settings
 from rest_framework import serializers
 
+<<<<<<< HEAD
+=======
+from backend.foodgram import MEDIA_ROOT, SUB_DIR_RECIPES
+
+from .models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
+                     User)
+
+>>>>>>> dev
 
 class Base64ImageFieldToFile(serializers.Field):
     """ Новый тип поля в serializers.py. для преобразования base64 в файл."""

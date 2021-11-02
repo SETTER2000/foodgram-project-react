@@ -25,7 +25,20 @@ from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+<<<<<<< HEAD
 from users.serializers import UserSerializer
+=======
+
+from backend.app.pagination import PaginationAll, PaginationNull
+from backend.foodgram import DEFAULT_FROM_EMAIL, FONT_PDF, ROLES_PERMISSIONS
+
+from ..users.serializers import UserSerializer
+from .models import Ingredient, Recipes, Tag
+from .permissions import IsAuthorOrReadOnly, PermissonForRole
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipesListSerializer, RecipesSerializer,
+                          TagSerializer)
+>>>>>>> dev
 
 User = get_user_model()
 
