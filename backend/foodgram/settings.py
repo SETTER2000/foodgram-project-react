@@ -56,10 +56,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'foodgram.urls'
+ROOT_URLCONF = 'backend.foodgram.urls'
 
 # TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/build')
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/../../frontend/build')
 
 TEMPLATES = [
     {
@@ -119,7 +119,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = ((os.path.join(BASE_DIR, 'frontend/build/static')),)
+STATICFILES_DIRS = ((os.path.join(BASE_DIR,
+                                  'frontend/build/../../frontend/build/static')),)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

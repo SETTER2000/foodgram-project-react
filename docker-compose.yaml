@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:12.4
+    image: postgres:13.3
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -18,7 +18,6 @@ services:
   backend:
     image: setter2000/foodgramback:latest
     restart: always
-#    command: gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_value:/code/backend_static/
       - media_value:/code/backend_media/
@@ -31,10 +30,10 @@ services:
       - static_value:/code/backend_static/
       - media_value:/code/backend_media/
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py makemigrations --noinput &&
+             python manage.py migrate --noinput &&
              python manage.py collectstatic --noinput &&
-             python manage.py create admin &&
-             python manage.py filldb"
+             python manage.py loaddata data/data.json"
     depends_on:
       - backend
     env_file:

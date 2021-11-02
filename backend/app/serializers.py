@@ -4,7 +4,7 @@ import time
 
 from rest_framework import serializers
 
-from foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
+from backend.foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
 
 from .models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
                      User)

@@ -11,7 +11,7 @@ COPY requirements.txt $DIRPATH
 
 RUN python3 -m pip install --upgrade pip && pip install -r $DIRPATH/requirements.txt --no-cache-dir
 
-COPY . $DIRPATH
+COPY .. $DIRPATH
 
 WORKDIR $DIRPATH
 
