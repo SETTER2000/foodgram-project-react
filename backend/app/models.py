@@ -5,11 +5,9 @@ from django.db import models
 from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
 from rest_framework.fields import CharField
-<<<<<<< HEAD
-from utilites.utils import slugify
-=======
+
 from backend.foodgram import SUB_DIR_RECIPES
->>>>>>> dev
+
 
 User = get_user_model()
 
