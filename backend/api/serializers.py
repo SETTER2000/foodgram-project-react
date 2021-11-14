@@ -4,10 +4,15 @@ import time
 
 from rest_framework import serializers
 
-from backend.foodgram.settings import MEDIA_ROOT, SUB_DIR_RECIPES
+from django.conf import settings
 
-from .models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
-                     User)
+from .models import (
+    Favorite,
+    Ingredient,
+    Recipes,
+    RecipesIngredients,
+    Tag,
+    User)
 
 
 class Base64ImageFieldToFile(serializers.Field):
@@ -16,7 +21,7 @@ class Base64ImageFieldToFile(serializers.Field):
     def to_representation(self, value):
         """Для чтения.
         Снипет, если нужно вернуть Base64:
-        value = f'{MEDIA_ROOT}/{value}'
+        value = f'{settings.MEDIA_ROOT}/{value}'
         with open(value, 'rb') as f:
             str_64 = base64.standard_b64encode(f.read())
         value = (('%s' % str_64.decode().strip()))
@@ -26,14 +31,15 @@ class Base64ImageFieldToFile(serializers.Field):
 
     def to_internal_value(self, data):
         """ Для записи. """
-        os.makedirs(f'{MEDIA_ROOT}/{SUB_DIR_RECIPES}', exist_ok=True)
+        os.makedirs(f'{settings.MEDIA_ROOT}/{settings.SUB_DIR_RECIPES}',
+                    exist_ok=True)
 
         try:
             format, imgstr = data.split(';base64,')
             ext = format.split('/')[-1]
             img_data = base64.b64decode(imgstr)
-            filename = f'{SUB_DIR_RECIPES}/{int(time.time())}.{ext}'
-            full_file_path = f'{MEDIA_ROOT}/{filename}'
+            filename = f'{settings.SUB_DIR_RECIPES}/{int(time.time())}.{ext}'
+            full_file_path = f'{settings.MEDIA_ROOT}/{filename}'
             f = open(full_file_path, 'wb')
             f.write(img_data)
             f.close()
@@ -225,13 +231,14 @@ class RecipesListSerializer(serializers.ModelSerializer):
 
 def image_convert(img: base64):
     """Конвертирует картинку из base64 в строку."""
-    os.makedirs(f'{MEDIA_ROOT}/{SUB_DIR_RECIPES}', exist_ok=True)
+    os.makedirs(f'{settings.MEDIA_ROOT}/{settings.SUB_DIR_RECIPES}',
+                exist_ok=True)
     try:
         format, imgstr = img.split(';base64,')
         ext = format.split('/')[-1]
         img_data = base64.b64decode(imgstr)
-        filename = f'{SUB_DIR_RECIPES}/{int(time.time())}.{ext}'
-        full_file_path = f'{MEDIA_ROOT}/{filename}'
+        filename = f'{settings.SUB_DIR_RECIPES}/{int(time.time())}.{ext}'
+        full_file_path = f'{settings.MEDIA_ROOT}/{filename}'
         f = open(full_file_path, 'wb')
         f.write(img_data)
         f.close()

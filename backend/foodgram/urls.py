@@ -6,10 +6,10 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('djoser.urls.authtoken')),
-    path('api/', include('backend.users.urls')),
-    # path('api/', include('backend.app.urls')),
-    # path('api/', include('backend.users.urls', namespace='backend.users')),
-    path('api/', include('backend.app.urls', namespace='backend.app')),
+    path('api/', include('users.urls')),
+    # path('api/', include('api.urls')),
+    # path('api/', include('users.urls', namespace='users')),
+    path('api/', include('api.urls', namespace='api')),
     path('api/', include('djoser.urls')),
 ]
 

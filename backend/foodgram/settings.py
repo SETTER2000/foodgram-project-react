@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'djoser',
     'corsheaders',
     'django_filters',
-    'backend.users',
-    'backend.app',
+    'users',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -56,15 +56,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.foodgram.urls'
+ROOT_URLCONF = 'foodgram.urls'
 
 # TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/../../frontend/build')
+# TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/../../frontend/build')
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,14 +81,14 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        #'ENGINE': os.environ.get('DB_ENGINE'),
-        #'NAME': os.environ.get('DB_NAME'),
-        #'USER': os.environ.get('POSTGRES_USER'),
-        #'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        #'HOST': os.environ.get('DB_HOST'),
-        #'PORT': os.environ.get('DB_PORT'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.environ.get('DB_ENGINE'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD')
     }
 }
 
@@ -119,11 +119,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = ((os.path.join(BASE_DIR,
-                                  'frontend/build/../../frontend/build/static')),)
+# STATICFILES_DIRS = ((os.path.join(BASE_DIR,
+#                                   'frontend/build/../../frontend/build/static')),)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
 
 CORS_ORIGIN_ALLOW_ALL = True

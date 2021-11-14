@@ -4,10 +4,10 @@ from django.db import models
 from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
 from rest_framework.fields import CharField
+from users.models import User
 
-from backend.foodgram.settings import SUB_DIR_RECIPES
+from django.conf import settings
 
-User = get_user_model()
 
 
 class Ingredient(models.Model):
@@ -63,7 +63,7 @@ class Recipes(models.Model):
         'text',
         'cooking_time']
 
-    image = models.ImageField(upload_to=SUB_DIR_RECIPES)
+    image = models.ImageField(upload_to=settings.SUB_DIR_RECIPES)
     name = models.CharField(
         'Название',
         max_length=200, )

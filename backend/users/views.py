@@ -6,7 +6,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
-from backend.foodgram.settings import DEFAULT_FROM_EMAIL
+from django.conf import settings
 
 from .mixin import CreateListModelMixinViewSet
 from .models import User
@@ -80,7 +80,7 @@ def email_auth(request):
     send_mail(
         subject='Код для генерации токена аутентификации',
         message=str(confirmation_code),
-        from_email=DEFAULT_FROM_EMAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=(request.data['email'],)
     )
     return Response(

@@ -1,1 +1,0 @@
-[{"model": "app.tag", "pk": 1, "fields": {"name": "\u0417\u0430\u0432\u0442\u0440\u0430\u043a", "color": "#FF7400", "slug": "breakfast"}}, {"model": "app.tag", "pk": 2, "fields": {"name": "\u041e\u0431\u0435\u0434", "color": "#008500", "slug": "lunch"}}, {"model": "app.tag", "pk": 3, "fields": {"name": "\u0423\u0436\u0438\u043d", "color": "#B92E3B", "slug": "dinner"}}]

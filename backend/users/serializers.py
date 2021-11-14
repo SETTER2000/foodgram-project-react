@@ -4,8 +4,8 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from ..app.serializers import RecipesMinSerializer
-from .models import Subscriptions, User
+from api.serializers import RecipesMinSerializer
+from users.models import Subscriptions, User
 
 
 class UserSerializer(serializers.ModelSerializer):
