@@ -1,16 +1,10 @@
 import io
+from functools import partial
 
-<<<<<<< HEAD:backend/app/views.py
-from app.models import Ingredient, Recipes, Tag
-from app.pagination import PaginationAll, PaginationNull
-from app.permissions import IsAuthorOrReadOnly
-from app.serializers import (FavoriteSerializer, IngredientSerializer,
-=======
 from api.models import Ingredient, Recipes, Tag
 from api.pagination import PaginationAll, PaginationNull
 from api.permissions import IsAuthorOrReadOnly, PermissonForRole
 from api.serializers import (FavoriteSerializer, IngredientSerializer,
->>>>>>> olga:backend/api/views.py
                              RecipesListSerializer, RecipesSerializer,
                              TagSerializer)
 from django.conf import settings
@@ -32,20 +26,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-<<<<<<< HEAD:backend/app/views.py
-
-from backend.app.pagination import PaginationAll, PaginationNull
-from backend.foodgram import DEFAULT_FROM_EMAIL, FONT_PDF, ROLES_PERMISSIONS
-
-from ..users.serializers import UserSerializer
-from .models import Ingredient, Recipes, Tag
-from .permissions import IsAuthorOrReadOnly, PermissonForRole
-from .serializers import (FavoriteSerializer, IngredientSerializer,
-                          RecipesListSerializer, RecipesSerializer,
-                          TagSerializer)
-=======
 from users.serializers import UserSerializer
->>>>>>> olga:backend/api/views.py
 
 User = get_user_model()
 
@@ -62,12 +43,9 @@ class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = PaginationNull
-<<<<<<< HEAD:backend/app/views.py
-=======
     permission_classes = (
         partial(PermissonForRole, settings.ROLES_PERMISSIONS.get('Tag')),
     )
->>>>>>> olga:backend/api/views.py
     filter_backends = (filters.SearchFilter,)
     search_fields = ('slug',)
 
@@ -77,10 +55,7 @@ class FavoriteModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     permission_classes = (
         (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
-<<<<<<< HEAD:backend/app/views.py
-=======
         | partial(PermissonForRole, settings.ROLES_PERMISSIONS.get('Reviews')),
->>>>>>> olga:backend/api/views.py
     )
 
     def get_queryset(self):
@@ -107,15 +82,12 @@ class ShoppingCardModelViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     pagination_class = PaginationAll
 
-<<<<<<< HEAD:backend/app/views.py
-=======
     # permission_classes = (
     #     (IsAuthenticatedOrReadOnly & IsAuthorOrReadOnly)
     #     | partial(PermissonForRole, settings.ROLES_PERMISSIONS.get(
     # 'Shopping')),
     # )
 
->>>>>>> olga:backend/api/views.py
     def get_queryset(self):
         """Добавит рецепт в покупки."""
         try:
@@ -150,6 +122,8 @@ class RecipesModelViewSet(viewsets.ModelViewSet):
                           permissions.IsAuthenticatedOrReadOnly]
     parser_classes = (MultiPartParser, JSONParser)
     filter_backends = (DjangoFilterBackend,)
+
+    # filterset_class = RecipesFilter
 
     def perform_create(self, serializer):
         user = User.objects.filter(email=self.request.user)

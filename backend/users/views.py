@@ -7,11 +7,6 @@ from rest_framework.decorators import action, api_view
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
-<<<<<<< HEAD
-from backend.foodgram import DEFAULT_FROM_EMAIL
-
-=======
->>>>>>> olga
 from .mixin import CreateListModelMixinViewSet
 from .models import User
 from .serializers import UserSerializer

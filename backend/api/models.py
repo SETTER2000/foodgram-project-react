@@ -1,22 +1,10 @@
 from django.conf import settings
-<<<<<<< HEAD:backend/app/models.py
-from django.contrib.auth import get_user_model
-=======
->>>>>>> olga:backend/api/models.py
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
 from rest_framework.fields import CharField
-<<<<<<< HEAD:backend/app/models.py
-
-from backend.foodgram import SUB_DIR_RECIPES
-
-
-User = get_user_model()
-=======
 from users.models import User
->>>>>>> olga:backend/api/models.py
 
 
 class Ingredient(models.Model):
@@ -38,34 +26,20 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     """Теги рецепта."""
-
-    class Color(models.TextChoices):
-        ORANGE = '#E26C2D', _('Оранжевый')
-        GREEN = '#49B64E', _('Зелёный')
-        PURPLE = '#8775D2', _('Фиолетовый')
-
     name = models.TextField(
         'Название тега',
         max_length=70,
         unique=True,
         db_index=True
     )
+
     color = models.CharField(
-        'Цвет тега',
+        'Цветовой HEX-код',
         unique=True,
-        max_length=7,
-        choices=Color.choices,
-        help_text='Выберите цвет из списка',
-    )
+        max_length=7)
     slug = models.SlugField(
         'URL',
-        unique=True
-    )
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+        unique=True)
 
     def __str__(self) -> TextField:
         return self.name
@@ -126,11 +100,7 @@ class Recipes(models.Model):
 
     ingredients = models.ManyToManyField(
         'Ingredient',
-        through='RecipesIngredients',
-        through_fields=('recipe', 'ingredient'),
-        verbose_name='Ингредиенты',
-        help_text='Выберите ингредиенты из списка',
-    )
+        through='RecipesIngredients')
 
     tags = models.ManyToManyField(
         'Tag',
@@ -147,8 +117,7 @@ class Recipes(models.Model):
 
 
 class RecipesIngredients(models.Model):
-    """ В этой модели будут связаны id рецепта и
-    id его ингредиента."""
+    """ В этой модели будут связаны id рецепта и id его ингредиента."""
     ingredient = models.ForeignKey(
         Ingredient,
         verbose_name='Ингредиент',
