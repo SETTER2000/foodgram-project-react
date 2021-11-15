@@ -1,10 +1,9 @@
+from api.serializers import RecipesMinSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from api.serializers import RecipesMinSerializer
 from users.models import Subscriptions, User
 
 
