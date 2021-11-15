@@ -18,6 +18,9 @@ services:
 
   backend:
     image: setter2000/foodgramback:latest
+#    build:
+#      dockerfile: ./backend/Dockerfile
+#      context: .
     restart: always
     volumes:
       - static_value:/code/backend/static/
@@ -29,6 +32,7 @@ services:
       - postgres
 
   migrations:
+#    image: foodgram-project-react_backend
     image: setter2000/foodgramback:latest
     volumes:
       - .:/backend/

@@ -71,6 +71,7 @@ jobs:
 
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.django
             echo FONT_PDF=${{ secrets.FONT_PDF }} >> .envs/.django
+            echo SUB_DIR_RECIPES=${{ secrets.SUB_DIR_RECIPES }} >> .envs/.django
             sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
 
   send_message:

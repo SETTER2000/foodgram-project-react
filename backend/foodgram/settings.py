@@ -22,7 +22,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 
 DEFAULT_FROM_EMAIL = 'admin@example.com'
 EVD = '-пусто-'
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
 ALLOWED_HOSTS = ['*']
@@ -125,8 +125,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
-SUB_DIR_RECIPES = os.path.join(MEDIA_URL, 'images_recipes')
+SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
 
 
 CORS_ORIGIN_ALLOW_ALL = True
