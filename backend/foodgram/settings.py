@@ -1,24 +1,31 @@
 import os
+# import environ
+# env = environ.Env()
 from datetime import timedelta
 
 import dotenv
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn='https://9ebbbce0f7244178ac893020081ff7df@o960815.ingest.sentry.io/6010342',
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
 
 dotenv.load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECRET_KEY = '^r!^)ap$rs_vn6rkx^5qa5ap*qktwo%sfco74fg0577@#c5#*&'
 SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 
 DEFAULT_FROM_EMAIL = 'admin@example.com'
-
 EVD = '-пусто-'
 DEBUG = True
 
-
-DEBUG = False
-
-ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
+# ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = ['*']
 
 FONT_PDF = os.environ.get('FONT_PDF')
 
@@ -49,11 +56,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.foodgram.urls'
+ROOT_URLCONF = 'foodgram.urls'
 
 # TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 # TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/../../frontend/build')
-
 
 TEMPLATES = [
     {
@@ -120,7 +126,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
-# SUB_DIR_RECIPES = 'recipes/images'
 
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -164,7 +169,7 @@ SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(days=30)}
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, '../../sent_emails')
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 AUTH_USER_MODEL = 'users.User'
 
