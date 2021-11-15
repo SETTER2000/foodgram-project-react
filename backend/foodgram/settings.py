@@ -125,7 +125,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
+# SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
+SUB_DIR_RECIPES = 'images_recipes'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'

@@ -68,7 +68,8 @@ jobs:
             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .envs/.postgres
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .envs/.postgres
 
-            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.postgres
+            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.django
+            echo FONT_PDF=${{ secrets.FONT_PDF }} >> .envs/.django
             sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
 
   send_message:
