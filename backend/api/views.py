@@ -9,10 +9,8 @@ from api.serializers import (FavoriteSerializer, IngredientSerializer,
                              TagSerializer)
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404
-from django.utils.crypto import get_random_string
 from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import letter
