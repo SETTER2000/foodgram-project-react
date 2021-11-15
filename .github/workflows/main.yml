@@ -57,8 +57,9 @@ jobs:
           script: |
             sudo docker pull setter2000/foodgramback
             sudo docker stop $(sudo docker ps -a -q)
-            rm -rf .envs/.postgres
+            rm -rf .envs/.postgres .envs/.django
             touch .envs/.postgres
+            touch .envs/.django
 
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .envs/.postgres
             echo DB_HOST=${{ secrets.DB_HOST }} >> .envs/.postgres
