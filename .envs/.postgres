@@ -1,6 +1,7 @@
 DB_ENGINE=django.db.backends.postgresql
+DB_HOST=postgres
+DB_PORT=5432
 POSTGRES_DB=foodgram
 POSTGRES_USER=foodgram_user
 POSTGRES_PASSWORD=Tel-555555
-DB_HOST=postgres
-DB_PORT=5432
+
