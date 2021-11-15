@@ -6,8 +6,12 @@ COPY . .
 
 WORKDIR ./backend
 
-RUN python -m pip install --upgrade pip && \
-pip3 install -r requirements.txt --no-cache-dir && \
+RUN pip3 install -r requirements.txt
+
+RUN python manage.py collectstatic
+
+#RUN python -m pip install --upgrade pip && \
+#pip3 install -r requirements.txt --no-cache-dir && \
 
 #RUN python manage.py collectstatic
 
