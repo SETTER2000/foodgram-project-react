@@ -1,0 +1,4 @@
+SUB_DIR_RECIPES=recipes
+ALLOWED_HOSTS=*
+FONT_PDF=api/fonts/Oswald.ttf
+DJANGO_DEBUG=True

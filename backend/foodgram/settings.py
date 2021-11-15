@@ -22,7 +22,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 
 DEFAULT_FROM_EMAIL = 'admin@example.com'
 EVD = '-пусто-'
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG')
 
 # ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
 ALLOWED_HOSTS = ['*']
