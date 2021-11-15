@@ -102,7 +102,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+#.env
 .venv
 env/
 venv/
@@ -135,8 +135,4 @@ media/
 *.old.*
 dump.json
 .env.template
-<<<<<<< HEAD
-infra/.envs/
-=======
 .envs
->>>>>>> olga
