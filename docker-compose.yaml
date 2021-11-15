@@ -37,12 +37,9 @@ services:
     volumes:
       - .:/backend/
     command: >
-      sh -c "python manage.py makemigrations users --noinput &&
-             python manage.py makemigrations --noinput &&
-             python manage.py migrate --noinput &&
-             python manage.py loaddata data/tag.json &&
-             python manage.py loaddata data/ingredient.json &&
-             python manage.py loaddata data/user.json"
+      sh -c "python manage.py makemigrations --noinput && python manage.py
+      migrate --noinput && python manage.py loaddata data/tag.json && python
+       manage.py loaddata data/ingredient.json && python manage.py loaddata data/user.json"
     env_file:
       - ./.envs/.postgres
       - ./.envs/.django
