@@ -10,11 +10,18 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index),
     path('api/auth/', include('djoser.urls.authtoken')),
+<<<<<<< HEAD:backend/foodgram/urls.py
     path('api/', include('backend.users.urls')),
     # path('api/', include('backend.app.urls')),
     # path('api/', include('backend.users.urls', namespace='backend.users')),
     path('api/', include('backend.app.urls', namespace='backend.app')),
 
+=======
+    path('api/', include('users.urls')),
+    # path('api/', include('api.urls')),
+    # path('api/', include('users.urls', namespace='users')),
+    path('api/', include('api.urls', namespace='api')),
+>>>>>>> olga:foodgram/urls.py
     path('api/', include('djoser.urls')),
 ]
 

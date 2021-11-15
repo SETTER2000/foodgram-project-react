@@ -2,6 +2,7 @@ import base64
 import os
 import time
 
+<<<<<<< HEAD:backend/app/serializers.py
 from app.models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
                         User)
 from django.conf import settings
@@ -9,6 +10,11 @@ from rest_framework import serializers
 
 from backend.foodgram import MEDIA_ROOT, SUB_DIR_RECIPES
 
+=======
+from django.conf import settings
+from rest_framework import serializers
+
+>>>>>>> olga:backend/api/serializers.py
 from .models import (Favorite, Ingredient, Recipes, RecipesIngredients, Tag,
                      User)
 
@@ -19,7 +25,7 @@ class Base64ImageFieldToFile(serializers.Field):
     def to_representation(self, value):
         """Для чтения.
         Снипет, если нужно вернуть Base64:
-        value = f'{MEDIA_ROOT}/{value}'
+        value = f'{settings.MEDIA_ROOT}/{value}'
         with open(value, 'rb') as f:
             str_64 = base64.standard_b64encode(f.read())
         value = (('%s' % str_64.decode().strip()))

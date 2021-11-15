@@ -1,15 +1,22 @@
 from django.conf import settings
+<<<<<<< HEAD:backend/app/models.py
 from django.contrib.auth import get_user_model
+=======
+>>>>>>> olga:backend/api/models.py
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import TextField
 from django.utils.translation import gettext_lazy as _
 from rest_framework.fields import CharField
+<<<<<<< HEAD:backend/app/models.py
 
 from backend.foodgram import SUB_DIR_RECIPES
 
 
 User = get_user_model()
+=======
+from users.models import User
+>>>>>>> olga:backend/api/models.py
 
 
 class Ingredient(models.Model):

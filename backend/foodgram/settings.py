@@ -11,6 +11,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 
 DEFAULT_FROM_EMAIL = 'admin@example.com'
+<<<<<<< HEAD:backend/foodgram/settings.py
+=======
+EVD = '-пусто-'
+DEBUG = True
+>>>>>>> olga:foodgram/settings.py
 
 DEBUG = True
 
@@ -30,9 +35,14 @@ INSTALLED_APPS = [
     'djoser',
     'corsheaders',
     'django_filters',
+<<<<<<< HEAD:backend/foodgram/settings.py
     'backend.users',
     'backend.app',
 
+=======
+    'users',
+    'api',
+>>>>>>> olga:foodgram/settings.py
 ]
 
 MIDDLEWARE = [
@@ -49,12 +59,16 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backend.foodgram.urls'
 
 # TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+<<<<<<< HEAD:backend/foodgram/settings.py
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/../../frontend/build')
+=======
+# TEMPLATES_DIR = os.path.join(BASE_DIR, 'frontend/../../frontend/build')
+>>>>>>> olga:foodgram/settings.py
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,8 +85,19 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
+<<<<<<< HEAD:backend/foodgram/settings.py
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+=======
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.environ.get('DB_ENGINE'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD')
+>>>>>>> olga:foodgram/settings.py
     }
 }
 
@@ -103,13 +128,20 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+<<<<<<< HEAD:backend/foodgram/settings.py
 STATICFILES_DIRS = ((os.path.join(BASE_DIR,
                                   'frontend/build/../../frontend/build/static')),)
+=======
+# STATICFILES_DIRS = ((os.path.join(BASE_DIR,
+#                                   'frontend/build/../../frontend/build/static')),)
+>>>>>>> olga:foodgram/settings.py
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
 # SUB_DIR_RECIPES = 'recipes/images'
+
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'

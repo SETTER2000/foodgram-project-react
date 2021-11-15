@@ -135,4 +135,8 @@ media/
 *.old.*
 dump.json
 .env.template
+<<<<<<< HEAD
 infra/.envs/
+=======
+.envs
+>>>>>>> olga

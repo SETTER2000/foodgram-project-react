@@ -1,9 +1,13 @@
+<<<<<<< HEAD:backend/app/admin.py
 from app.models import Favorite, Ingredient, Recipes, RecipesIngredients, Tag
+=======
+>>>>>>> olga:backend/api/admin.py
 from django.conf import settings
 from django.contrib import admin
 from django.utils.html import format_html
 from utilites.mixins import AdminColor
 
+<<<<<<< HEAD:backend/app/admin.py
 
 @admin.register(Tag)
 class TagAdmin(AdminColor, admin.ModelAdmin):
@@ -12,6 +16,9 @@ class TagAdmin(AdminColor, admin.ModelAdmin):
         "slug": ("name",),
     }
     ordering = ("id",)
+=======
+from . import models
+>>>>>>> olga:backend/api/admin.py
 
 
 @admin.register(Ingredient)
@@ -22,12 +29,21 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = settings.EVD
 
 
+<<<<<<< HEAD:backend/app/admin.py
 # @admin.register(Tag)
 # class TagAdmin(admin.ModelAdmin):
 #     search_fields = ('name', 'color', 'slug',)
 #     list_display = ('id', 'name', 'color', 'slug',)
 #     list_display_list = ('name',)
 #     empty_value_display = settings.EVD
+=======
+@admin.register(models.Tag)
+class TagAdmin(admin.ModelAdmin):
+    search_fields = ('name', 'color', 'slug',)
+    list_display = ('id', 'name', 'color', 'slug',)
+    list_display_list = ('name',)
+    empty_value_display = settings.EVD
+>>>>>>> olga:backend/api/admin.py
 
 
 @admin.register(Favorite)
@@ -36,6 +52,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'image', 'cooking_time',)
     list_display_list = ('name',)
     empty_value_display = settings.EVD
+<<<<<<< HEAD:backend/app/admin.py
 
 
 @admin.register(RecipesIngredients)
@@ -47,10 +64,13 @@ class RecipesIngredientsAdmin(admin.ModelAdmin):
 class IngridientItemAdmin(admin.StackedInline):
     model = Recipes.ingredients.through
     extra = 0
+=======
+>>>>>>> olga:backend/api/admin.py
 
 
 @admin.register(Recipes)
 class RecipesAdmin(admin.ModelAdmin):
+<<<<<<< HEAD:backend/app/admin.py
     inlines = (IngridientItemAdmin,)
     list_display = (
         "id",
@@ -63,9 +83,16 @@ class RecipesAdmin(admin.ModelAdmin):
     search_fields = ("name", "author__username", "author__email")
     list_filter = ("tags",)
     filter_horizontal = ("tags",)
+=======
+    search_fields = ('id', 'name', 'image', 'text', 'author', 'cooking_time',)
+    list_display = ('id', 'name', 'image', 'text', 'author', 'cooking_time',)
+    list_display_list = ('name',)
+    empty_value_display = settings.EVD
+>>>>>>> olga:backend/api/admin.py
 
     readonly_fields = ("image_change_preview",)
 
+<<<<<<< HEAD:backend/app/admin.py
     def image_change_preview(self, obj):
         if obj.image:
             url = obj.image.url
@@ -89,3 +116,11 @@ class RecipesAdmin(admin.ModelAdmin):
         return "Картинка"
 
     image_list_preview.short_description = "Картинка"
+=======
+@admin.register(models.RecipesIngredients)
+class RecipesIngredientsAdmin(admin.ModelAdmin):
+    search_fields = ('id', 'ingredient', 'recipe', 'amount')
+    list_display = ('id', 'ingredient', 'recipe', 'amount')
+    list_display_list = ('id',)
+    empty_value_display = settings.EVD
+>>>>>>> olga:backend/api/admin.py

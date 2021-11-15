@@ -5,6 +5,12 @@ from django.urls import path
 from django.urls.conf import include
 from rest_framework import routers
 
+<<<<<<< HEAD:backend/app/urls.py
+=======
+from . import views as vs
+
+app_name = 'api'
+>>>>>>> olga:backend/api/urls.py
 router_v1 = routers.DefaultRouter()
 
 router_v1.register('ingredients', IngredientModelViewSet,
