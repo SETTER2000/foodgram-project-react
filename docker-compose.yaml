@@ -36,8 +36,8 @@ services:
     image: setter2000/foodgramback:latest
     volumes:
       - .:/backend/
-    command: bash -c "python manage.py makemigrations users --noinput &&
-             python manage.py migrate --noinput &&
+    command: >
+      sh -c "python manage.py migrate --noinput &&
              python manage.py loaddata data/tag.json &&
              python manage.py loaddata data/ingredient.json &&
              python manage.py loaddata data/user.json"
@@ -45,7 +45,7 @@ services:
       - ./.envs/.postgres
       - ./.envs/.django
     depends_on:
-      - postgres
+      - nginx
 
   nginx:
     image: nginx:1.19.3
