@@ -135,4 +135,4 @@ media/
 *.old.*
 dump.json
 .env.template
-#.envs
+.envs
