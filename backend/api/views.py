@@ -182,19 +182,19 @@ def download_pdf(request):
     return FileResponse(buffer, as_attachment=True,
                         filename='recipes_shopping.pdf')
 
-
-@api_view(['POST'])
-def email_auth(request):
-    """Check email and send to it confirmation code for token auth."""
-    user = get_object_or_404(User, email=request.data['email'])
-    confirmation_code = get_random_string()
-    user.confirmation_code = confirmation_code
-    user.save()
-    send_mail(
-        subject='Код для генерации токена аутентификации YAMDB',
-        message=str(confirmation_code),
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=(request.data['email'],))
-    return Response(
-        data='Письмо с кодом для аутентификации',
-        status=status.HTTP_201_CREATED)
+#
+# @api_view(['POST'])
+# def email_auth(request):
+#     """Check email and send to it confirmation code for token auth."""
+#     user = get_object_or_404(User, email=request.data['email'])
+#     confirmation_code = get_random_string()
+#     user.confirmation_code = confirmation_code
+#     user.save()
+#     send_mail(
+#         subject='Код для генерации токена аутентификации YAMDB',
+#         message=str(confirmation_code),
+#         from_email=settings.DEFAULT_FROM_EMAIL,
+#         recipient_list=(request.data['email'],))
+#     return Response(
+#         data='Письмо с кодом для аутентификации',
+#         status=status.HTTP_201_CREATED)
