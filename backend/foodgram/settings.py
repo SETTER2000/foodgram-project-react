@@ -16,7 +16,7 @@ EVD = '-пусто-'
 DEBUG = True
 
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
 
