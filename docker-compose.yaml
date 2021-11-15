@@ -45,7 +45,7 @@ services:
       - ./.envs/.postgres
       - ./.envs/.django
     depends_on:
-      - nginx
+      - postgres
 
   nginx:
     image: nginx:1.19.3
