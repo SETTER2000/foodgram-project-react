@@ -26,7 +26,14 @@ DEBUG = False
 # ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
 ALLOWED_HOSTS = ['*']
 
-FONT_PDF = os.environ.get('FONT_PDF')
+FONT_PDF = 'api/fonts/Oswald.ttf'
+# FONT_PDF = os.environ.get('FONT_PDF')
+
+
+# SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
+SUB_DIR_RECIPES ='recipes'
+
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -124,7 +131,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
 
 
 CORS_ORIGIN_ALLOW_ALL = True
