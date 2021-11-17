@@ -4,6 +4,7 @@ import os
 from datetime import timedelta
 
 import dotenv
+dotenv.load_dotenv()
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -14,7 +15,7 @@ sentry_sdk.init(
     send_default_pii=True
 )
 
-dotenv.load_dotenv()
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,10 +23,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT')
 
 DEFAULT_FROM_EMAIL = 'admin@example.com'
 EVD = '-пусто-'
-DEBUG = os.environ.get('DJANGO_DEBUG')
+DEBUG = os.environ.get('DJANGO_DEBUG', [False])
 
 # ALLOWED_HOSTS = [host for host in os.environ.get('ALLOWED_HOSTS')]
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', ['*'])
 
 FONT_PDF = os.environ.get('FONT_PDF')
 
