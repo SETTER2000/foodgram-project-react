@@ -50,6 +50,10 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
 
 
+def get_img_upload_path(instance, filename):
+    return f'{instance.name}/{filename}'
+
+
 class Recipes(models.Model):
     """Рецепты блюд."""
     REQUIRED_FIELDS = [
@@ -60,7 +64,7 @@ class Recipes(models.Model):
         'text',
         'cooking_time']
 
-    image = models.ImageField(upload_to=settings.SUB_DIR_RECIPES)
+    image = models.ImageField(upload_to=get_img_upload_path)
     name = models.CharField(
         'Название',
         max_length=200, )
