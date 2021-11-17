@@ -15,7 +15,6 @@ services:
       - ./frontend/:/api/result_build/
     depends_on:
       - postgres
-
   backend:
 #    image: setter2000/foodgramback:latest
     build:
