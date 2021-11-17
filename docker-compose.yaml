@@ -39,8 +39,7 @@ services:
              python manage.py migrate --noinput &&
              python manage.py loaddata data/user.json &&
              python manage.py loaddata data/tag.json &&
-             python manage.py loaddata data/ingredient.json &&
-             python manage.py collectstatic --no-input"
+             python manage.py loaddata data/ingredient.json"
     env_file:
       - ./.envs/.postgres
       - ./.envs/.django
