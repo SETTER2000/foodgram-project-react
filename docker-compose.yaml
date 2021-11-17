@@ -36,8 +36,7 @@ services:
     image: setter2000/foodgramback:latest
     volumes:
       - .:/backend/
-    command: >
-      sh -c "python manage.py makemigrations --noinput &&
+    command: bash -c "python manage.py makemigrations --noinput &&
              python manage.py migrate --noinput &&
              python manage.py loaddata data/user.json &&
              python manage.py loaddata data/tag.json &&
