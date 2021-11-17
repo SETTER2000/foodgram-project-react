@@ -55,7 +55,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo docker pull setter2000/foodgramback
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgramback
             sudo docker stop $(sudo docker ps -a -q)
             rm -rf .envs/.postgres .envs/.django
             touch .envs/.postgres
@@ -73,8 +73,7 @@ jobs:
             echo SUB_DIR_RECIPES=${{ secrets.SUB_DIR_RECIPES }} >> .envs/.django
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.django
             echo DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }} >> .envs/.django
-            sudo docker run --rm -d -p 8000:8000 setter2000/foodgramback
-
+            sudo docker-compose  up --build -d
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
