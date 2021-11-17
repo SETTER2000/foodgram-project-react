@@ -31,9 +31,7 @@ FONT_PDF = 'api/fonts/Oswald.ttf'
 
 
 # SUB_DIR_RECIPES = os.environ.get('SUB_DIR_RECIPES')
-SUB_DIR_RECIPES ='recipes'
-
-
+SUB_DIR_RECIPES = 'recipes'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -130,8 +128,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
