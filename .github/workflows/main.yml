@@ -73,7 +73,7 @@ jobs:
             echo SUB_DIR_RECIPES=${{ secrets.SUB_DIR_RECIPES }} >> .envs/.django
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .envs/.django
             echo DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }} >> .envs/.django
-            sudo docker-compose  up --build -d
+            sudo docker-compose  up --build -d —-no-cache
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
