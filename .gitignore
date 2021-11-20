@@ -136,3 +136,5 @@ media/
 dump.json
 .env.template
 .envs
+frontend
+frontend_old

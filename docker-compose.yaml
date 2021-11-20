@@ -12,7 +12,7 @@ services:
   frontend:
     image: raikhert/foodgramfront:latest
     volumes:
-      - ./frontend/:/api/result_build/
+      - ./frontend/:/app/result_build/
     depends_on:
       - postgres
   backend:
